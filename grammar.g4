@@ -9,7 +9,7 @@ programm    :     block '.';
 block       :     ((consts? vars?) | (vars? consts?)) procedure* statement ';'?;
 
 procedure   :     PROCEDURE IDENT ';' block;
-vars        :     VAR IDENT (',' IDENT)* ';';
+vars        :     VAR IDENT ('=' (INTEGER | FLOAT | BOOL))? (',' IDENT ('=' (INTEGER | FLOAT | BOOL))?)* ';';
 consts      :     CONST IDENT '=' (INTEGER | FLOAT | BOOL) (',' IDENT '=' (INTEGER | FLOAT | BOOL))* ';';
 
 statement   :     region | call | assign | while_ | if_ | print | break_ | continue_;
