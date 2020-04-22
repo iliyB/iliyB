@@ -25,8 +25,9 @@ continue_   :     CONTINUE;
 
 
 condition   :     expr COMPARE expr
-                  | DENIAL? '(' condition ')'
-                  | DENIAL? expr;
+                  | '(' condition ')'
+                  | expr
+                  | DENIAL? condition;
 
 expr        :     term
                   | expr ('+' | '-') term
