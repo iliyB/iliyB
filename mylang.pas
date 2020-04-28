@@ -1,16 +1,16 @@
 //Пример кода языка
 
 CONST max = 100, db = true;
-VAR x, y, b;
+VAR x, y, b, s;
 
 PROCEDURE proc1;
 VAR i;
 BEGIN
 	i := 4;
 	x := 20;
-	WHILE i < x DO
+	WHILE (i < x) DO
 	BEGIN
-		IF max / i * i == max THEN
+		IF (max / i * i == max) THEN
 			BEGIN
 				x := x - 1;
 			END;
@@ -26,16 +26,16 @@ BEGIN
 	WHILE !(y != x) DO
 	BEGIN
 		y := y + 1;
-		IF x == 2 THEN
+		s := "hello";
+		IF (x == 2) AND (s == "hello") THEN
 			BEGIN
 				x := y + 1;
 			END;
-	END;
-	IF y != x THEN
+	IF !(12 == x) AND ( !(b) OR (32 != y)) THEN
 		BEGIN
 		b := true;
 		END;
-	IF b THEN
+	IF (b) THEN
 		BEGIN
 		CALL proc1;
 		IF (b == db) THEN
