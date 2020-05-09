@@ -76,7 +76,7 @@ IDENT       :     LETTERS(LETTERS|NUMBER)*;
 ERROR_IDENT :     NUMBER(LETTERS)(LETTERS|NUMBER)*; // должна быть обработка ошибки
 FLOAT       :     '-'? NUMBER'.'NUMBER;
 INTEGER     :     '-'? NUMBER;
-STRING      :     '"'(LETTERS|NUMBER)*'"';
+STRING      :     '"' ~["\r]* '"';
 NUMBER      :     [0-9]+;
 LETTERS     :     [A-Za-z]+;
 MANY_COMMENT:     '/*' .*? '*/' -> skip; // многострочный комментарий
