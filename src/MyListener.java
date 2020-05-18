@@ -60,7 +60,7 @@ public class MyListener extends HelloBaseListener {
             }
         }
 
-        System.out.println(variables.entrySet());
+        //System.out.println(variables.entrySet());
     }
 
 
@@ -113,7 +113,20 @@ public class MyListener extends HelloBaseListener {
                 }
             }
         }
-        System.out.println(variables.entrySet());
+        //System.out.println(variables.entrySet());
+    }
+
+    @Override
+    public void exitFactor(HelloParser.FactorContext context)
+    {
+    }
+
+    @Override
+    public void exitTerm(HelloParser.TermContext context)
+    {
+        System.out.println("wqe");
+        System.out.println();
+        //System.out.println(context.factor().getTokens(HelloParser.IDENT));
     }
 
     /*

@@ -21,6 +21,15 @@ public class Value {
         this.CONST = true;
     }
 
+    public boolean isConst() {
+        return this.CONST;
+    }
+
+    public String isType() {
+        return this.TYPE;
+    }
+
+
     public void set(boolean BOOL)
     {
         this.TYPE = "BOOL";
