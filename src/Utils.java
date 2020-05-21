@@ -1,90 +1,76 @@
 public class Utils {
+    private static String Int = "INTEGER";
+    private static String Flo = "FLOAT";
 
-    public boolean CheckType(Value t, Value s)
-    {
-        String type_t = t.isType();
-        String type_s = s.isType();
-        if (type_s.equals(type_t))
-        {
+    public static boolean CheckType(Value v1, Value v2) {
+        String type1 = v1.getType();
+        String type2 = v2.getType();
+        if ((type1.equals(Int) || type1.equals(Flo)) && (type2.equals(Int) || type2.equals(Flo))) {
             return true;
-        }
-        else if ((type_s.equals("INTEGER") || type_s.equals("BOOL")) && (type_t.equals("INTEGER") || type_t.equals("BOOL")))
-        {
-            return  true;
-        }
-        else return false;
+        } else return false;
     }
 
-    public boolean CheckMultDiv(Value t)
-    {
-        if ((t.isType() == "BOOL") && (t.isType() == "STRING")) return false;
-        else return true;
-    }
+    public static Value Div(Value v1, Value v2) {
+        String type1 = v1.getType();
+        String type2 = v2.getType();
+        Value value;
+        if ((type1.equals(Int)) && (type2.equals(Int))) {
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Integer.parseInt(v2.toString()), false);
+        } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Float.parseFloat(v2.toString()), false);
+        } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) / Float.parseFloat(v2.toString()), false);
+        } else
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) / Integer.parseInt(v2.toString()), false);
 
-    public Value Mult(Value t, Value s) {
-        String type_t = t.isType();
-        String type_s = s.isType();
-        Value value = new Value();
-        if (type_t.equals("INTEGER") && type_s.equals("INTEGER")) value.set(t.INTEGER * s.INTEGER);
-        else if (type_t.equals("INTEGER") && type_s.equals("FLOAT")) value.set(t.INTEGER * s.FLOAT);
-        else if (type_t.equals("FLOAT") && type_s.equals("INTEGER")) value.set(t.FLOAT * s.INTEGER);
-        else value.set(t.FLOAT * s.FLOAT);
         return value;
     }
 
-    public Value Div(Value t, Value s) {
-        String type_t = t.isType();
-        String type_s = s.isType();
-        Value value = new Value();
-        if (type_t.equals("INTEGER") && type_s.equals("INTEGER")) value.set(t.INTEGER / s.INTEGER);
-        else if (type_t.equals("INTEGER") && type_s.equals("FLOAT")) value.set(t.INTEGER / s.FLOAT);
-        else if (type_t.equals("FLOAT") && type_s.equals("INTEGER")) value.set(t.FLOAT / s.INTEGER);
-        else value.set(t.FLOAT / s.FLOAT);
+    public static Value Mult(Value v1, Value v2) {
+        String type1 = v1.getType();
+        String type2 = v2.getType();
+        Value value;
+        if ((type1.equals(Int)) && (type2.equals(Int))) {
+            value = new Value("", Int, Integer.parseInt(v1.toString()) * Integer.parseInt(v2.toString()), false);
+        } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) * Float.parseFloat(v2.toString()), false);
+        } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) * Float.parseFloat(v2.toString()), false);
+        } else
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) * Integer.parseInt(v2.toString()), false);
+
         return value;
     }
 
+    public static Value Sub(Value v1, Value v2) {
+        String type1 = v1.getType();
+        String type2 = v2.getType();
+        Value value;
+        if ((type1.equals(Int)) && (type2.equals(Int))) {
+            value = new Value("", Int, Integer.parseInt(v1.toString()) - Integer.parseInt(v2.toString()), false);
+        } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) - Float.parseFloat(v2.toString()), false);
+        } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) - Float.parseFloat(v2.toString()), false);
+        } else
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) - Integer.parseInt(v2.toString()), false);
 
-    public Value Sum(Value s, Value t) {
-        String type_t = t.isType();
-        String type_s = s.isType();
-        Value value = new Value();
-        if (type_t.equals("BOOL"))
-        {
-            value.set(t.BOOL & s.BOOL);
-        }
-        else if (type_t.equals("STRING"))
-        {
-            value.set(t.STRING + s.STRING);
-        }
-        else
-        {
-            if (type_s.equals("INTEGER") && (type_t.equals("INTEGER"))) value.set(s.INTEGER + t.INTEGER);
-            else if (type_s.equals("INTEGER") && (type_t.equals("FLOAT"))) value.set(s.INTEGER + t.FLOAT);
-            else if (type_s.equals("FLOAT") && (type_t.equals("FLOAT"))) value.set(s.FLOAT + t.FLOAT);
-            else value.set(s.FLOAT + s.INTEGER);
-        }
         return value;
     }
 
-    public Value Sub(Value s, Value t) {
-        String type_t = t.isType();
-        String type_s = s.isType();
-        Value value = new Value();
-        if (type_t.equals("BOOL"))
-        {
-            value.set(t.BOOL & s.BOOL);
-        }
-        else if (type_t.equals("STRING"))
-        {
-            value.set(t.STRING + s.STRING);
-        }
-        else
-        {
-            if (type_s.equals("INTEGER") && (type_t.equals("INTEGER"))) value.set(s.INTEGER - t.INTEGER);
-            else if (type_s.equals("INTEGER") && (type_t.equals("FLOAT"))) value.set(s.INTEGER - t.FLOAT);
-            else if (type_s.equals("FLOAT") && (type_t.equals("FLOAT"))) value.set(s.FLOAT - t.FLOAT);
-            else value.set(s.FLOAT - s.INTEGER);
-        }
+    public static Value Sum(Value v1, Value v2) {
+        String type1 = v1.getType();
+        String type2 = v2.getType();
+        Value value;
+        if ((type1.equals(Int)) && (type2.equals(Int))) {
+            value = new Value("", Int, Integer.parseInt(v1.toString()) + Integer.parseInt(v2.toString()), false);
+        } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) + Float.parseFloat(v2.toString()), false);
+        } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) + Float.parseFloat(v2.toString()), false);
+        } else
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) + Integer.parseInt(v2.toString()), false);
+
         return value;
     }
 }

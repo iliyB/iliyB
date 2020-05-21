@@ -1,10 +1,11 @@
 //Пример кода языка
 
 CONST max = 100, db = true;
-VAR x = false, y, b, s;
+VAR x = false, y = 1, b = 1, s = 1;
 
 PROCEDURE proc1;
-VAR i;
+VAR i = 2;
+CONST l = 23;
 BEGIN
 	i := 4;
 	x := 20;

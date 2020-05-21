@@ -1,4 +1,4 @@
-// Generated from C:/Users/iliy-/IntelliJIDEAProjects/Hello/src\Hello.g4 by ANTLR 4.8
+// Generated from C:/Users/iliy-/IntelliJIDEAProjects/HelloLang/src\Hello.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -177,33 +177,123 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitFactor_cond(HelloParser.Factor_condContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#expr}.
+	 * Enter a parse tree produced by the {@code expr_op}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpr(HelloParser.ExprContext ctx);
+	void enterExpr_op(HelloParser.Expr_opContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#expr}.
+	 * Exit a parse tree produced by the {@code expr_op}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpr(HelloParser.ExprContext ctx);
+	void exitExpr_op(HelloParser.Expr_opContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#term}.
+	 * Enter a parse tree produced by the {@code expr_term}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterTerm(HelloParser.TermContext ctx);
+	void enterExpr_term(HelloParser.Expr_termContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#term}.
+	 * Exit a parse tree produced by the {@code expr_term}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitTerm(HelloParser.TermContext ctx);
+	void exitExpr_term(HelloParser.Expr_termContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#factor}.
+	 * Enter a parse tree produced by the {@code expr_string}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterFactor(HelloParser.FactorContext ctx);
+	void enterExpr_string(HelloParser.Expr_stringContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#factor}.
+	 * Exit a parse tree produced by the {@code expr_string}
+	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitFactor(HelloParser.FactorContext ctx);
+	void exitExpr_string(HelloParser.Expr_stringContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code expr_bool}
+	 * labeled alternative in {@link HelloParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpr_bool(HelloParser.Expr_boolContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code expr_bool}
+	 * labeled alternative in {@link HelloParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpr_bool(HelloParser.Expr_boolContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code term_op}
+	 * labeled alternative in {@link HelloParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void enterTerm_op(HelloParser.Term_opContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code term_op}
+	 * labeled alternative in {@link HelloParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void exitTerm_op(HelloParser.Term_opContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code term_factor}
+	 * labeled alternative in {@link HelloParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void enterTerm_factor(HelloParser.Term_factorContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code term_factor}
+	 * labeled alternative in {@link HelloParser#term}.
+	 * @param ctx the parse tree
+	 */
+	void exitTerm_factor(HelloParser.Term_factorContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code factor_ident}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactor_ident(HelloParser.Factor_identContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code factor_ident}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactor_ident(HelloParser.Factor_identContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code factor_integer}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactor_integer(HelloParser.Factor_integerContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code factor_integer}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactor_integer(HelloParser.Factor_integerContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code factor_float}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactor_float(HelloParser.Factor_floatContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code factor_float}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactor_float(HelloParser.Factor_floatContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code factor_expr}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void enterFactor_expr(HelloParser.Factor_exprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code factor_expr}
+	 * labeled alternative in {@link HelloParser#factor}.
+	 * @param ctx the parse tree
+	 */
+	void exitFactor_expr(HelloParser.Factor_exprContext ctx);
 }

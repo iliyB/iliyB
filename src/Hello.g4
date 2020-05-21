@@ -1,7 +1,5 @@
 grammar Hello;
 
-
-
 //Основан на грамматике pl0
 //------------------------------------------------------------------------------
 //GRAMMAR
@@ -26,127 +24,30 @@ break_      :     BREAK;
 continue_   :     CONTINUE;
 
 
-condition   returns[Value value]:
-                    t=term_cond {
-                       $value = $t.value;
-                    }
-                  | '(' s=condition ')' {
-                       $value = $s.value;
-                  }
-                  | DENIAL condition {
-                        //??????
-                  }
-                  | condition AND term_cond {
-                        //??????
-                  };
+condition   :     term_cond
+                  | '(' condition ')'
+                  | DENIAL condition
+                  | condition AND term_cond;
 
-term_cond   returns[Value value]:
-                    f=factor_cond {
-                        $value = $f.value;
-                    }
-                  | DENIAL s=term_cond {
-                         //отрицание value?????
-                  }
-                  | '(' s=term_cond ')' {
-                         $value = $s.value;
-                  }
-                  | s=term_cond OR f=factor_cond {
-                         //??????????
-                  };
+term_cond   :     factor_cond
+                  | DENIAL term_cond
+                  | '(' term_cond ')'
+                  | term_cond OR factor_cond;
 
-factor_cond returns[Value value]:
-                  '(' s1=expr COMPARE s2=expr ')' {
-                        //проверка COMPARE
-                        //проверка типов
-                        //действие
-                  }
-                  | '(' s=expr ')' {
-                        $value = $s.value;
-                  }
-                  | DENIAL f=factor_cond {
-                        //отрицание value?????
-                  };
+factor_cond :     '(' expr COMPARE expr ')'
+                  | '(' expr ')'
+                  | DENIAL factor_cond;
 
-expr        returns[Value value]:
-                    s=term {
-                        $value = $s.value;
-                    }
-                  | t=expr '+' s=term {
-                        if (CheckType($t,$s))
-                        {
-                            $value = Sum($t,$s);
-                        }
-                        else
-                        {
-                            //исключение
-                        }
-                  }
-                  | t=expr '-' s=term {
-                        if (CheckType($t,$s))
-                        {
-                            $value = Sub($t,$s);
-                        }
-                        else
-                        {
-                            //исключение
-                        }
-                  }
-                  | y=BOOL {
-                        $value.set($y.boolean);
-                  }
-                  | y=STRING {
-                        $value.set($y.toString);
-                  };
-term        returns[Value value]:
-                    s=factor {
-                        $value = $s.value;
-                    }
-                  | t=term '*' s=factor {
-                        if (CheckType($t,$s))
-                        {
-                            if (CheckMultDiv($t))
-                            {
-                                $value = Mult($t,$s);
-                            }
-                            else
-                            {
-                                //исключение
-                            }
-                        }
-                        else
-                        {
-                            //исключение
-                        }
-                  }
-                  | t=term '/' s=factor {
-                        if (CheckType($t,$s))
-                        {
-                            if (CheckMultDiv($t))
-                            {
-                                $value = Mult($t,$s);
-                            }
-                            else
-                            {
-                                //исключение
-                            }
-                        }
-                        else
-                        {
-                            //исключение
-                        }
-                  };
-factor      returns[Value value]:
-                  s=IDENT   #factorIdent
-                  | s=INTEGER {
-                        $value.set($s.int);
-                  }         #factor_
-                  | s=FLOAT   {
-                        //$value.set($s.float);
-                  }         #factor_
-                  | '(' s=expr ')' {
-                        //$value = $s.value;
-                  }        #factor_;
-
+expr        :     term #expr_term
+                  | expr op = ('+' | '-') term #expr_op
+                  | BOOL #expr_bool
+                  | STRING #expr_string;
+term        :     factor #term_factor
+                  | term op = ('/' | '*') factor #term_op;
+factor      :     IDENT #factor_ident
+                  | INTEGER  #factor_integer
+                  | FLOAT  #factor_float
+                  | '(' expr ')'#factor_expr;
 
 //------------------------------------------------------------------------------
 //LEXER
@@ -183,4 +84,4 @@ NUMBER      :     [0-9]+;
 LETTERS     :     [A-Za-z]+;
 MANY_COMMENT:     '/*' .*? '*/' -> skip; // многострочный комментарий
 LINE_COMMENT:     '//' ~[\n\r]* -> skip; // однострочный комментарий
-WS          :     [ \n\t\r]+ -> channel (HIDDEN);
+WS          :     [ \n\t\r]+ -> skip;

@@ -1,62 +1,79 @@
-
-
 public class Value {
-    public String TYPE;
-    public boolean CONST = false;
-    public boolean defined = false;
 
-    public String STRING;
-    public boolean BOOL;
-    public int INTEGER;
-    public float FLOAT;
-
-
-    public boolean isDefined()
-    {
-        return this.defined;
-    }
-
-    public void setConst()
-    {
-        this.CONST = true;
-    }
-
-    public boolean isConst() {
-        return this.CONST;
-    }
-
-    public String isType() {
-        return this.TYPE;
+    private enum Type {
+        INTEGER, FLOAT, BOOLEAN, STRING
     }
 
 
-    public void set(boolean BOOL)
-    {
-        this.TYPE = "BOOL";
-        this.BOOL = BOOL;
-        if (!this.defined)  this.defined = true;
+    private Type type;
+    private Object value;
+    private String ident;
+    private boolean const_;
+
+
+    public Object getValue() {
+        switch (type) {
+            case INTEGER:
+                return new Integer(value.toString());
+            case FLOAT:
+                return new Float(value.toString());
+            case BOOLEAN:
+                return new Boolean(value.toString());
+            case STRING:
+                return new String(value.toString());
+        }
+        return null;
     }
 
-    public void set(String STRING)
-    {
-        this.TYPE = "STRING";
-        this.STRING = STRING;
-        if (!this.defined)  this.defined = true;
+    public void setValue(Object value) {
+        if (!this.const_) this.value = value;
     }
 
-    public void set(int INTEGER)
-    {
-        this.TYPE = "INTEGER";
-        this.INTEGER = INTEGER;
-        if (!this.defined)  this.defined = true;
+    public String getType() {
+        return type.toString();
     }
 
-    public void set(float FLOAT)
-    {
-        this.TYPE = "FLOAT";
-        this.FLOAT = FLOAT;
-        if (!this.defined)  this.defined = true;
+    public Value(String ident) {
+        this.ident = ident;
+        this.const_ = false;
     }
 
+    public Value(String ident, String type, Object value, Boolean const_) {
+        this.ident = ident;
+        this.type = SetType(type);
+        this.value = value;
+        this.const_ = const_;
+    }
 
+    public String getIdent() {
+        return this.ident;
+    }
+
+    public Boolean isConst() {
+        return this.const_;
+    }
+
+    private Type SetType(String type) {
+        switch (type) {
+            case "INTEGER":
+                return Type.INTEGER;
+            case "FLOAT":
+                return Type.FLOAT;
+            case "BOOLEAN":
+                return Type.BOOLEAN;
+            case "STRING":
+                return Type.STRING;
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        if (this.value != null) {
+            return this.value.toString();
+        }
+        else {
+            return null;
+        }
+    }
 }

@@ -1,9 +1,12 @@
-// Generated from C:/Users/iliy-/IntelliJIDEAProjects/Hello/src\Hello.g4 by ANTLR 4.8
+// Generated from C:/Users/iliy-/IntelliJIDEAProjects/HelloLang/src\Hello.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class HelloParser extends Parser {
@@ -13,10 +16,10 @@ public class HelloParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, //. 0 // ; 1 // = 2
-		T__9=10, BEGIN=11, END=12, VAR=13, PROCEDURE=14, WHILE=15, DO=16, IF=17, // , 3 // ( 4 // ) 5
-		THEN=18, ASSIGN=19, DENIAL=20, COMPARE=21, CALL=22, CONST=23, PRINT=24, // + 6 // - 7 // / 8
-		BREAK=25, CONTINUE=26, AND=27, OR=28, BOOL=29, IDENT=30, ERROR_IDENT=31, // * 9
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
+		T__9=10, BEGIN=11, END=12, VAR=13, PROCEDURE=14, WHILE=15, DO=16, IF=17, 
+		THEN=18, ASSIGN=19, DENIAL=20, COMPARE=21, CALL=22, CONST=23, PRINT=24, 
+		BREAK=25, CONTINUE=26, AND=27, OR=28, BOOL=29, IDENT=30, ERROR_IDENT=31, 
 		FLOAT=32, INTEGER=33, STRING=34, NUMBER=35, LETTERS=36, MANY_COMMENT=37, 
 		LINE_COMMENT=38, WS=39;
 	public static final int
@@ -1438,29 +1441,89 @@ public class HelloParser extends Parser {
 	}
 
 	public static class ExprContext extends ParserRuleContext {
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
-		public TerminalNode BOOL() { return getToken(HelloParser.BOOL, 0); }
-		public TerminalNode STRING() { return getToken(HelloParser.STRING, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expr; }
+	 
+		public ExprContext() { }
+		public void copyFrom(ExprContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Expr_opContext extends ExprContext {
+		public Token op;
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
+		public Expr_opContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterExpr(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterExpr_op(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitExpr(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitExpr_op(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitExpr(this);
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitExpr_op(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_termContext extends ExprContext {
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
+		public Expr_termContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterExpr_term(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitExpr_term(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitExpr_term(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_stringContext extends ExprContext {
+		public TerminalNode STRING() { return getToken(HelloParser.STRING, 0); }
+		public Expr_stringContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterExpr_string(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitExpr_string(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitExpr_string(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Expr_boolContext extends ExprContext {
+		public TerminalNode BOOL() { return getToken(HelloParser.BOOL, 0); }
+		public Expr_boolContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterExpr_bool(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitExpr_bool(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitExpr_bool(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1489,18 +1552,28 @@ public class HelloParser extends Parser {
 			case FLOAT:
 			case INTEGER:
 				{
+				_localctx = new Expr_termContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+
 				setState(214);
 				term(0);
 				}
 				break;
 			case BOOL:
 				{
+				_localctx = new Expr_boolContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(215);
 				match(BOOL);
 				}
 				break;
 			case STRING:
 				{
+				_localctx = new Expr_stringContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
 				setState(216);
 				match(STRING);
 				}
@@ -1518,14 +1591,15 @@ public class HelloParser extends Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new ExprContext(_parentctx, _parentState);
+					_localctx = new Expr_opContext(new ExprContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_expr);
 					setState(219);
 					if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 					setState(220);
+					((Expr_opContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__6 || _la==T__7) ) {
-					_errHandler.recoverInline(this);
+						((Expr_opContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1555,27 +1629,55 @@ public class HelloParser extends Parser {
 	}
 
 	public static class TermContext extends ParserRuleContext {
-		public FactorContext factor() {
-			return getRuleContext(FactorContext.class,0);
-		}
-		public TermContext term() {
-			return getRuleContext(TermContext.class,0);
-		}
 		public TermContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_term; }
+	 
+		public TermContext() { }
+		public void copyFrom(TermContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Term_opContext extends TermContext {
+		public Token op;
+		public TermContext term() {
+			return getRuleContext(TermContext.class,0);
+		}
+		public FactorContext factor() {
+			return getRuleContext(FactorContext.class,0);
+		}
+		public Term_opContext(TermContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterTerm(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterTerm_op(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitTerm(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitTerm_op(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitTerm(this);
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitTerm_op(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Term_factorContext extends TermContext {
+		public FactorContext factor() {
+			return getRuleContext(FactorContext.class,0);
+		}
+		public Term_factorContext(TermContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterTerm_factor(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitTerm_factor(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitTerm_factor(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1597,6 +1699,10 @@ public class HelloParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
+			_localctx = new Term_factorContext(_localctx);
+			_ctx = _localctx;
+			_prevctx = _localctx;
+
 			setState(228);
 			factor();
 			}
@@ -1610,14 +1716,15 @@ public class HelloParser extends Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new TermContext(_parentctx, _parentState);
+					_localctx = new Term_opContext(new TermContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_term);
 					setState(230);
 					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 					setState(231);
+					((Term_opContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__8 || _la==T__9) ) {
-					_errHandler.recoverInline(this);
+						((Term_opContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1647,27 +1754,83 @@ public class HelloParser extends Parser {
 	}
 
 	public static class FactorContext extends ParserRuleContext {
-		public TerminalNode IDENT() { return getToken(HelloParser.IDENT, 0); }
-		public TerminalNode INTEGER() { return getToken(HelloParser.INTEGER, 0); }
-		public TerminalNode FLOAT() { return getToken(HelloParser.FLOAT, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
-		}
 		public FactorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_factor; }
+	 
+		public FactorContext() { }
+		public void copyFrom(FactorContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class Factor_integerContext extends FactorContext {
+		public TerminalNode INTEGER() { return getToken(HelloParser.INTEGER, 0); }
+		public Factor_integerContext(FactorContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterFactor(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterFactor_integer(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitFactor(this);
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitFactor_integer(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitFactor(this);
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitFactor_integer(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Factor_floatContext extends FactorContext {
+		public TerminalNode FLOAT() { return getToken(HelloParser.FLOAT, 0); }
+		public Factor_floatContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterFactor_float(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitFactor_float(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitFactor_float(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Factor_identContext extends FactorContext {
+		public TerminalNode IDENT() { return getToken(HelloParser.IDENT, 0); }
+		public Factor_identContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterFactor_ident(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitFactor_ident(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitFactor_ident(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Factor_exprContext extends FactorContext {
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public Factor_exprContext(FactorContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).enterFactor_expr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof HelloListener ) ((HelloListener)listener).exitFactor_expr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof HelloVisitor ) return ((HelloVisitor<? extends T>)visitor).visitFactor_expr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1680,6 +1843,7 @@ public class HelloParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case IDENT:
+				_localctx = new Factor_identContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(238);
@@ -1687,6 +1851,7 @@ public class HelloParser extends Parser {
 				}
 				break;
 			case INTEGER:
+				_localctx = new Factor_integerContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(239);
@@ -1694,6 +1859,7 @@ public class HelloParser extends Parser {
 				}
 				break;
 			case FLOAT:
+				_localctx = new Factor_floatContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(240);
@@ -1701,6 +1867,7 @@ public class HelloParser extends Parser {
 				}
 				break;
 			case T__4:
+				_localctx = new Factor_exprContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(241);
