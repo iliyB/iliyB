@@ -4,11 +4,9 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class MyVisitor  extends HelloBaseVisitor<Object> {
-    //HashMap<String, Value> global_variables = new HashMap<>();
     HashMap<String, Value> current_variables = new HashMap<>();
     Stack <HashMap<String, Value>> stack_variables = new Stack<>();
-
-
+    HashMap<String, HelloParser.BlockContext> function = new HashMap<>();
 
 
     private Value getVariable(String variableName) throws Exception {
@@ -20,10 +18,38 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                 return cv.get(variableName);
             }
         }
-        throw  new Exception("Variable" + variableName + "not identified");
+        throw  new Exception("Variable " + variableName + " is not identified");
     }
 
-    //block
+    private void setVariable(String variableName, Value value) throws Exception {
+        value.setIdent(variableName);
+        if (current_variables.containsKey(variableName)) {
+            Value val = current_variables.get(variableName);
+            if (val.isConst()) throw new Exception("You cannot change the value of a constant " + variableName);
+            else current_variables.replace(variableName, value);
+        }
+        else
+        for (HashMap<String, Value> cv: stack_variables) {
+            if (cv.containsKey(variableName)) {
+                Value val = cv.get(variableName);
+                if (val.isConst()) throw new Exception("You cannot change the value of a constant " + variableName);
+                else cv.replace(variableName, value);
+            }
+            else throw  new Exception("Variable" + variableName + " is not identified");
+        }
+    }
+
+    private void callProcedure(String ident) throws Exception{
+        if (function.containsKey(ident)) {
+            visit(function.get(ident));
+        }
+        else throw new Exception("Procedure" + ident + " is not identified");
+    }
+
+    @Override
+    public Object visitProgramm(HelloParser.ProgrammContext context) {
+        return visitChildren(context);
+    }
 
     @Override
     public Object visitBlock(HelloParser.BlockContext context) {
@@ -39,7 +65,13 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         return null;
     }
 
-    //consts
+    @Override
+    public Object visitProcedure(HelloParser.ProcedureContext context) {
+        String ident = context.IDENT().getText();
+        function.put(ident, context.block());
+        return null;
+    }
+
 
     @Override
     public Object visitConsts(HelloParser.ConstsContext context) {
@@ -76,7 +108,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         return null;
     }
 
-    //vars
 
     @Override
     public Object visitVars(HelloParser.VarsContext context) {
@@ -120,6 +151,84 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         }
         return null;
     }
+
+    //statements
+
+    @Override
+    public Object visitCall(HelloParser.CallContext context) {
+        try {
+            callProcedure(context.IDENT().getText());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitAssign(HelloParser.AssignContext context) {
+        String variableName = context.IDENT().getText();
+        Value value = (Value) visit(context.expr());
+        //System.out.println(variableName + " = " + value.getValue().toString());
+        try {
+            setVariable(variableName, value);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitPrint(HelloParser.PrintContext context) {
+        System.out.println("");
+        for (int i = 0; i < context.expr().size(); i++) {
+            Value value = (Value) visit(context.expr(i));
+            System.out.print(value.getValue().toString() + " ");
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitStatement(HelloParser.StatementContext context) {
+        return visitChildren(context);
+    }
+
+    @Override
+    public Object visitRegion(HelloParser.RegionContext context) {
+        return visitChildren(context);
+    }
+
+    @Override
+    public Object visitIf_(HelloParser.If_Context context) {
+        Value value = (Value) visit(context.condition());
+        if (Boolean.parseBoolean(value.getValue().toString())) {
+            visit(context.statement());
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitWhile_(HelloParser.While_Context context) {
+        Value value = (Value) visit(context.condition());
+        while (Boolean.parseBoolean(value.getValue().toString())) {
+            visit(context.statement());
+            System.out.println(context.statement().children.contains(context.statement().break_()));
+            value = (Value) visit(context.condition());
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitBreak_(HelloParser.Break_Context context) {
+        return null;
+    }
+
+    @Override
+    public Object visitContinue_(HelloParser.Continue_Context context) {
+        return null;
+    }
+
 
     //condition
 
@@ -262,13 +371,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     @Override
     public Object visitExpr_bool(HelloParser.Expr_boolContext context) {
-        /*
-        System.out.println(context.BOOL().getText());
-        System.out.println(Boolean.parseBoolean(context.BOOL().getText()));
-        Value value = new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()), false);
-        System.out.println(value.getType());
-        System.out.println(value.getValue());
-         */
         return new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()), false);
     }
 

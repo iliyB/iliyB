@@ -53,6 +53,10 @@ public class Value {
         return this.const_;
     }
 
+    public void setIdent(String ident) {
+        this.ident = ident;
+    }
+
     private Type SetType(String type) {
         switch (type) {
             case "INTEGER":
