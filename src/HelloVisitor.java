@@ -94,23 +94,82 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitContinue_(HelloParser.Continue_Context ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#condition}.
+	 * Visit a parse tree produced by the {@code condition_denial}
+	 * labeled alternative in {@link HelloParser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCondition(HelloParser.ConditionContext ctx);
+	T visitCondition_denial(HelloParser.Condition_denialContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#term_cond}.
+	 * Visit a parse tree produced by the {@code condition_term}
+	 * labeled alternative in {@link HelloParser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTerm_cond(HelloParser.Term_condContext ctx);
+	T visitCondition_term(HelloParser.Condition_termContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#factor_cond}.
+	 * Visit a parse tree produced by the {@code condition_and}
+	 * labeled alternative in {@link HelloParser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFactor_cond(HelloParser.Factor_condContext ctx);
+	T visitCondition_and(HelloParser.Condition_andContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code term_cond_denial}
+	 * labeled alternative in {@link HelloParser#term_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerm_cond_denial(HelloParser.Term_cond_denialContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code term_cond_factor}
+	 * labeled alternative in {@link HelloParser#term_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerm_cond_factor(HelloParser.Term_cond_factorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code term_cond_or}
+	 * labeled alternative in {@link HelloParser#term_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTerm_cond_or(HelloParser.Term_cond_orContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code factor_cond_compare}
+	 * labeled alternative in {@link HelloParser#factor_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactor_cond_compare(HelloParser.Factor_cond_compareContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code factor_cond_expr}
+	 * labeled alternative in {@link HelloParser#factor_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactor_cond_expr(HelloParser.Factor_cond_exprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code factor_condition}
+	 * labeled alternative in {@link HelloParser#factor_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactor_condition(HelloParser.Factor_conditionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code factor_cond_term}
+	 * labeled alternative in {@link HelloParser#factor_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactor_cond_term(HelloParser.Factor_cond_termContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code factor_cond_denial}
+	 * labeled alternative in {@link HelloParser#factor_cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFactor_cond_denial(HelloParser.Factor_cond_denialContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code expr_op}
 	 * labeled alternative in {@link HelloParser#expr}.

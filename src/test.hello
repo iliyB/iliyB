@@ -1,7 +1,7 @@
 //Пример кода языка
 
 CONST max = 100, db = true;
-VAR x = false, y = 1, b = 1, s = 1;
+VAR x = 2, y = 2, b = false, s = "hello";
 
 PROCEDURE proc1;
 VAR i = 2;
@@ -28,6 +28,7 @@ BEGIN
 	BEGIN
 		y := y + 1;
 		s := "hello";
+		y := 2 * (2 + 3);
 		IF (x == 2) AND (s == "hello") THEN
 			BEGIN
 				x := y + 1;

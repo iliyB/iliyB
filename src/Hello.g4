@@ -24,19 +24,19 @@ break_      :     BREAK;
 continue_   :     CONTINUE;
 
 
-condition   :     term_cond
-                  | '(' condition ')'
-                  | DENIAL condition
-                  | condition AND term_cond;
+condition   :     term_cond #condition_term
+                  | DENIAL condition #condition_denial
+                  | condition AND term_cond #condition_and;
 
-term_cond   :     factor_cond
-                  | DENIAL term_cond
-                  | '(' term_cond ')'
-                  | term_cond OR factor_cond;
+term_cond   :     factor_cond #term_cond_factor
+                  | DENIAL term_cond #term_cond_denial
+                  | term_cond OR factor_cond #term_cond_or;
 
-factor_cond :     '(' expr COMPARE expr ')'
-                  | '(' expr ')'
-                  | DENIAL factor_cond;
+factor_cond :     '(' expr op = COMPARE expr ')' #factor_cond_compare
+                  | '(' expr ')' #factor_cond_expr
+                  | '(' condition ')' #factor_condition
+                  | '(' term_cond ')' #factor_cond_term
+                  | DENIAL factor_cond #factor_cond_denial;
 
 expr        :     term #expr_term
                   | expr op = ('+' | '-') term #expr_op

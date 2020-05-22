@@ -9,9 +9,7 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     Stack <HashMap<String, Value>> stack_variables = new Stack<>();
 
 
-    private static String removeChatAt(String s, int pos) {
-        return s.substring(0, pos) + s.substring(pos + 1);
-    }
+
 
     private Value getVariable(String variableName) throws Exception {
         if (current_variables.containsKey(variableName)) {
@@ -24,6 +22,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         }
         throw  new Exception("Variable" + variableName + "not identified");
     }
+
+    //block
 
     @Override
     public Object visitBlock(HelloParser.BlockContext context) {
@@ -38,6 +38,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         else current_variables.clear();
         return null;
     }
+
+    //consts
 
     @Override
     public Object visitConsts(HelloParser.ConstsContext context) {
@@ -62,8 +64,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                         break;
                     case HelloParser.STRING:
                         String val = variableToken.getText();
-                        val = removeChatAt(val, 0);
-                        val = removeChatAt(val, val.length() - 1);
+                        val = Utils.removeChatAt(val, 0);
+                        val = Utils.removeChatAt(val, val.length() - 1);
                         value = new Value(variableName, "STRING", val, true);
                         current_variables.put(variableName, value);
                         break;
@@ -73,6 +75,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         //System.out.println(current_variables.entrySet());
         return null;
     }
+
+    //vars
 
     @Override
     public Object visitVars(HelloParser.VarsContext context) {
@@ -99,8 +103,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                             break;
                         case HelloParser.STRING:
                             String val = variableToken.getText();
-                            val = removeChatAt(val, 0);
-                            val = removeChatAt(val, val.length() - 1);
+                            val = Utils.removeChatAt(val, 0);
+                            val = Utils.removeChatAt(val, val.length() - 1);
                             value = new Value(variableName, "STRING", val, false);
                             current_variables.put(variableName, value);
                             break;
@@ -117,15 +121,154 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         return null;
     }
 
+    //condition
 
+    @Override
+    public Object visitCondition_term(HelloParser.Condition_termContext context) {
+        return (Value) visit(context.term_cond());
+    }
+
+    @Override
+    public Object visitCondition_denial(HelloParser.Condition_denialContext context) {
+        Value value = (Value) visit(context.condition());
+        //System.out.println(value.getType() + " " + value.getIdent() + " " + value.getValue());
+        try {
+            Utils.CheckBoolean(value);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        boolean val = Boolean.parseBoolean(value.getValue().toString());
+        value.setValue(!val);
+        return value;
+    }
+
+    @Override
+    public Object visitCondition_and(HelloParser.Condition_andContext context) {
+        Value left = (Value) visit(context.condition());
+        Value right = (Value) visit(context.term_cond());
+        return new Value("", Utils.Bool, ((Boolean.parseBoolean(left.getValue().toString())) && (Boolean.parseBoolean(right.getValue().toString()))), false);
+    }
+
+
+    //term_cond
+
+    @Override
+    public Object visitTerm_cond_factor(HelloParser.Term_cond_factorContext context) {
+        return (Value) visit(context.factor_cond());
+    }
+
+    @Override
+    public Object visitTerm_cond_denial(HelloParser.Term_cond_denialContext context) {
+        Value value = (Value) visit(context.term_cond());
+        //System.out.println(value.getType() + " " + value.getIdent() + " " + value.getValue());
+        try {
+            Utils.CheckBoolean(value);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        boolean val = Boolean.parseBoolean(value.getValue().toString());
+        value.setValue(!val);
+        return value;
+    }
+
+    @Override
+    public Object visitTerm_cond_or(HelloParser.Term_cond_orContext context) {
+        Value left = (Value) visit(context.term_cond());
+        Value right = (Value) visit(context.factor_cond());
+        return new Value("", Utils.Bool, (Boolean.parseBoolean(left.getValue().toString()) || Boolean.parseBoolean(right.getValue().toString())), false);
+    }
+
+    //factor_cond
+
+    @Override
+    public Object visitFactor_cond_term(HelloParser.Factor_cond_termContext context) {
+        return (Value) visit(context.term_cond());
+    }
+
+    @Override
+    public Object visitFactor_cond_compare(HelloParser.Factor_cond_compareContext context) {
+        Value left = (Value) visit(context.expr(0));
+        Value right = (Value) visit(context.expr(1));
+        try {
+            if (!Utils.CheckTypeAll(left, right)) return null;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        Value value;
+        try {
+            return Utils.Compare(context.op.getText(), left, right);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Object visitFactor_cond_denial(HelloParser.Factor_cond_denialContext context) {
+        Value value = (Value) visit(context.factor_cond());
+        //System.out.println(value.getType() + " " + value.getIdent() + " " + value.getValue());
+        try {
+            Utils.CheckBoolean(value);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        boolean val = Boolean.parseBoolean(value.getValue().toString());
+        value.setValue(!val);
+        return value;
+    }
+
+    @Override
+    public Object visitFactor_condition(HelloParser.Factor_conditionContext context) {
+        return (Value) visit(context.condition());
+    }
+
+    @Override
+    public Object visitFactor_cond_expr(HelloParser.Factor_cond_exprContext context) {
+        Value result = (Value) visit(context.expr());
+        //System.out.println(result.getType() + " " + result.getIdent() + " " + result.getValue());
+        try {
+            Utils.CheckBoolean(result);
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //expr
+
+    @Override
+    public Object visitExpr_term(HelloParser.Expr_termContext context) {
+        return (Value) visit(context.term());
+    }
 
     @Override
     public Object visitExpr_string(HelloParser.Expr_stringContext context) {
-        return new Value("", "STRING", context.STRING().getText(), false);
+        String str = context.STRING().getText();
+        str = Utils.removeChatAt(str, 0);
+        str = Utils.removeChatAt(str, str.length() - 1);
+        return new Value("", "STRING", str, false);
     }
 
     @Override
     public Object visitExpr_bool(HelloParser.Expr_boolContext context) {
+        /*
+        System.out.println(context.BOOL().getText());
+        System.out.println(Boolean.parseBoolean(context.BOOL().getText()));
+        Value value = new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()), false);
+        System.out.println(value.getType());
+        System.out.println(value.getValue());
+         */
         return new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()), false);
     }
 
@@ -135,20 +278,27 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         Value right = (Value) visit(context.term());
         switch (context.op.getText()) {
             case "+":
-                if (Utils.CheckType(left, right))
-                {
-                    return Utils.Sum(left, right);
+                try {
+                    if (Utils.CheckType(left, right)) return Utils.Sum(left, right);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
             case "-":
-                if (Utils.CheckType(left, right))
-                {
-                    return Utils.Sub(left, right);
+                try {
+                    if (Utils.CheckType(left, right)) return Utils.Sub(left, right);
                 }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
 
         }
         return null;
     }
+
+    //term
 
     @Override
     public Object visitTerm_op(HelloParser.Term_opContext context) {
@@ -156,16 +306,21 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         Value right = (Value) visit(context.factor());
         switch (context.op.getText()) {
             case "/":
-                if (Utils.CheckType(left, right))
-                {
-                    return Utils.Div(left, right);
+                try {
+                    if (Utils.CheckType(left, right)) return Utils.Div(left, right);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
             case "*":
-                if (Utils.CheckType(left, right))
-                {
-                    return Utils.Mult(left, right);
+                try {
+                    if (Utils.CheckType(left, right)) return Utils.Mult(left, right);
                 }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
 
         }
         return null;
@@ -175,6 +330,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     public Object visitTerm_factor(HelloParser.Term_factorContext context) {
         return (Value) visit(context.factor());
     }
+
+    //factor
 
     @Override
     public Object visitFactor_expr(HelloParser.Factor_exprContext context) {
