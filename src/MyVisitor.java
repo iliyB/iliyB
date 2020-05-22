@@ -213,7 +213,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         Value value = (Value) visit(context.condition());
         while (Boolean.parseBoolean(value.getValue().toString())) {
             visit(context.statement());
-            System.out.println(context.statement().children.contains(context.statement().break_()));
             value = (Value) visit(context.condition());
         }
         return null;
