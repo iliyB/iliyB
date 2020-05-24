@@ -9,7 +9,7 @@ public class Main {
     {
         try
         {
-            org.antlr.v4.runtime.CharStream input = CharStreams.fromFileName("C:\\Users\\iliy-\\IntelliJIDEAProjects\\HelloLang\\src\\test.hello");
+            org.antlr.v4.runtime.CharStream input = CharStreams.fromFileName("/home/iliy/IdeaProjects/HelloLang/src/test.hello");
             HelloLexer lexer = new HelloLexer((input));
             HelloParser parser = new HelloParser(new CommonTokenStream(lexer));
             //parser.addParseListener(new MyListener());

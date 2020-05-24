@@ -19,7 +19,7 @@ call        :     CALL IDENT;
 assign      :     IDENT ASSIGN expr;
 while_      :     WHILE condition DO statement;
 if_         :     IF condition THEN statement;
-print       :     PRINT '(' expr (',' expr)* ')';
+print       :     PRINT '(' expr ')';
 break_      :     BREAK;
 continue_   :     CONTINUE;
 

@@ -7,6 +7,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     HashMap<String, Value> current_variables = new HashMap<>();
     Stack <HashMap<String, Value>> stack_variables = new Stack<>();
     HashMap<String, HelloParser.BlockContext> function = new HashMap<>();
+    boolean global = false;
+
 
 
     private Value getVariable(String variableName) throws Exception {
@@ -48,7 +50,11 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     @Override
     public Object visitProgramm(HelloParser.ProgrammContext context) {
-        return visitChildren(context);
+        visitChildren(context);
+        System.out.println();
+        System.out.println();
+        System.out.println(GenerateLLVM.generate());
+        return null;
     }
 
     @Override
@@ -59,9 +65,13 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
             stack = true;
         }
         current_variables = new HashMap<>();
+        if (context.parent.getChildCount() == 2) global = true;
+        else global = false;
         visitChildren(context);
         if (stack) current_variables = stack_variables.pop();
         else current_variables.clear();
+
+
         return null;
     }
 
@@ -85,14 +95,35 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                     case HelloParser.INTEGER:
                         value = new Value(variableName, "INTEGER", Integer.parseInt(variableToken.getText()), true);
                         current_variables.put(variableName, value);
+                        if (global) {
+                            GenerateLLVM.declare_global_i64(variableName, variableToken.getText());
+                        }
+                        else {
+                            GenerateLLVM.declare_alloca_i64(variableName);
+                            GenerateLLVM.assign_i64(variableName, variableToken.getText());
+                        }
                         break;
                     case HelloParser.FLOAT:
                         value = new Value(variableName, "FLOAT", Float.parseFloat(variableToken.getText()), true);
                         current_variables.put(variableName, value);
+                        if (global) {
+                            GenerateLLVM.declare_global_double(variableName, variableToken.getText());
+                        }
+                        else {
+                            GenerateLLVM.declare_alloca_double(variableName);
+                            GenerateLLVM.assign_double(variableName, variableToken.getText());
+                        }
                         break;
                     case HelloParser.BOOL:
                         value = new Value(variableName, "BOOLEAN", Boolean.parseBoolean(variableToken.getText()), true);
                         current_variables.put(variableName, value);
+                        if (global) {
+                            GenerateLLVM.declare_global_bool(variableName, variableToken.getText());
+                        }
+                        else {
+                            GenerateLLVM.declare_alloca_bool(variableName);
+                            GenerateLLVM.assign_bool(variableName, variableToken.getText());
+                        }
                         break;
                     case HelloParser.STRING:
                         String val = variableToken.getText();
@@ -123,14 +154,35 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                         case HelloParser.INTEGER:
                             value = new Value(variableName, "INTEGER", Integer.parseInt(variableToken.getText()), false);
                             current_variables.put(variableName, value);
+                            if (global) {
+                                GenerateLLVM.declare_global_i64(variableName, variableToken.getText());
+                            }
+                            else {
+                                GenerateLLVM.declare_alloca_i64(variableName);
+                                GenerateLLVM.assign_i64(variableName, variableToken.getText());
+                            }
                             break;
                         case HelloParser.FLOAT:
                             value = new Value(variableName, "FLOAT", Float.parseFloat(variableToken.getText()), false);
                             current_variables.put(variableName, value);
+                            if (global) {
+                                GenerateLLVM.declare_global_double(variableName, variableToken.getText());
+                            }
+                            else {
+                                GenerateLLVM.declare_alloca_double(variableName);
+                                GenerateLLVM.assign_double(variableName, variableToken.getText());
+                            }
                             break;
                         case HelloParser.BOOL:
                             value = new Value(variableName, "BOOLEAN", Boolean.parseBoolean(variableToken.getText()), false);
                             current_variables.put(variableName, value);
+                            if (global) {
+                                GenerateLLVM.declare_global_bool(variableName, variableToken.getText());
+                            }
+                            else {
+                                GenerateLLVM.declare_alloca_bool(variableName);
+                                GenerateLLVM.assign_bool(variableName, variableToken.getText());
+                            }
                             break;
                         case HelloParser.STRING:
                             String val = variableToken.getText();
@@ -145,6 +197,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                 else
                 {
                     current_variables.put(variableName, new Value(variableName));
+                    if (global) GenerateLLVM.declare_global_i64(variableName, "0");
+                    else GenerateLLVM.declare_alloca_i64(variableName);
                     i += 1;
                 }
             }
@@ -181,10 +235,29 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     @Override
     public Object visitPrint(HelloParser.PrintContext context) {
-        System.out.println("");
-        for (int i = 0; i < context.expr().size(); i++) {
-            Value value = (Value) visit(context.expr(i));
-            System.out.print(value.getValue().toString() + " ");
+        Value value = (Value) visit(context.expr());
+        System.out.println(value.getValue().toString());
+        if (value.getIdent().equals("")) {
+            switch (value.getType()) {
+                case "INTEGER":
+                    GenerateLLVM.print_i64(value.getValue().toString());
+                    break;
+                case "FLOAT":
+                    GenerateLLVM.print_double(value.getValue().toString());
+                    break;
+                case "BOOLEAN":
+                    GenerateLLVM.print_bool(value.getValue().toString());
+            }
+        }
+        else switch (value.getType()) {
+            case "INTEGER":
+                GenerateLLVM.print_declare_i64(value.getIdent());
+                break;
+            case "FLOAT":
+                GenerateLLVM.print_declare_double(value.getIdent());
+                break;
+            case "BOOLEAN":
+                GenerateLLVM.print_declare_bool(value.getIdent());
         }
         return null;
     }

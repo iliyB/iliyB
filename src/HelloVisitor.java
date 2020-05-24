@@ -1,4 +1,4 @@
-// Generated from C:/Users/iliy-/IntelliJIDEAProjects/HelloLang/src\Hello.g4 by ANTLR 4.8
+// Generated from /home/iliy/IdeaProjects/HelloLang/src/Hello.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
