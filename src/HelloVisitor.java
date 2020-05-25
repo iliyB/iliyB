@@ -34,11 +34,11 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVars(HelloParser.VarsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#consts}.
+	 * Visit a parse tree produced by {@link HelloParser#var}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConsts(HelloParser.ConstsContext ctx);
+	T visitVar(HelloParser.VarContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HelloParser#statement}.
 	 * @param ctx the parse tree
@@ -76,11 +76,19 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIf_(HelloParser.If_Context ctx);
 	/**
-	 * Visit a parse tree produced by {@link HelloParser#print}.
+	 * Visit a parse tree produced by the {@code print_expr}
+	 * labeled alternative in {@link HelloParser#print}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrint(HelloParser.PrintContext ctx);
+	T visitPrint_expr(HelloParser.Print_exprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code print_string}
+	 * labeled alternative in {@link HelloParser#print}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrint_string(HelloParser.Print_stringContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link HelloParser#break_}.
 	 * @param ctx the parse tree
@@ -171,6 +179,54 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFactor_cond_denial(HelloParser.Factor_cond_denialContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link HelloParser#declare_string}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_string(HelloParser.Declare_stringContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_bool_with_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_bool_with_value(HelloParser.Declare_bool_with_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_bool_without_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_bool_without_value(HelloParser.Declare_bool_without_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_float_with_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_float_with_value(HelloParser.Declare_float_with_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_float_without_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_float_without_value(HelloParser.Declare_float_without_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_int_with_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_int_with_value(HelloParser.Declare_int_with_valueContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declare_int_without_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclare_int_without_value(HelloParser.Declare_int_without_valueContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code expr_op}
 	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
@@ -184,13 +240,6 @@ public interface HelloVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExpr_term(HelloParser.Expr_termContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code expr_string}
-	 * labeled alternative in {@link HelloParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExpr_string(HelloParser.Expr_stringContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code expr_bool}
 	 * labeled alternative in {@link HelloParser#expr}.

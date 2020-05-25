@@ -8,50 +8,35 @@ public class Value {
     private Type type;
     private Object value;
     private String ident;
-    private boolean const_;
 
 
     public Object getValue() {
-        switch (type) {
-            case INTEGER:
-                return new Integer(value.toString());
-            case FLOAT:
-                return new Float(value.toString());
-            case BOOLEAN:
-                return new Boolean(value.toString());
-            case STRING:
-                return new String(value.toString());
-        }
-        return null;
+        return value.toString();
     }
 
     public void setValue(Object value) {
-        if (!this.const_) this.value = value;
+        this.value = value;
     }
 
     public String getType() {
         return type.toString();
     }
 
-    public Value(String ident) {
+    public Value(String ident, String type) {
         this.ident = ident;
-        this.const_ = false;
+        this.type = SetType(type);
     }
 
-    public Value(String ident, String type, Object value, Boolean const_) {
+    public Value(String ident, String type, Object value) {
         this.ident = ident;
         this.type = SetType(type);
         this.value = value;
-        this.const_ = const_;
     }
 
     public String getIdent() {
         return this.ident;
     }
 
-    public Boolean isConst() {
-        return this.const_;
-    }
 
     public void setIdent(String ident) {
         this.ident = ident;

@@ -1,23 +1,32 @@
 import org.antlr.v4.runtime.CommonToken;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class MyVisitor  extends HelloBaseVisitor<Object> {
     HashMap<String, Value> current_variables = new HashMap<>();
-    Stack <HashMap<String, Value>> stack_variables = new Stack<>();
+    HashMap<String, Value> global_variables = new HashMap<>();
     HashMap<String, HelloParser.BlockContext> function = new HashMap<>();
+    HashMap<String, Integer> print_string = new HashMap<>();
     boolean global = false;
+    String procedure = "test";
 
 
 
     private Value getVariable(String variableName) throws Exception {
-        if (current_variables.containsKey(variableName)) {
-            return current_variables.get(variableName);
+
+        if (global) {
+            if (global_variables.containsKey(variableName)) {
+                return global_variables.get(variableName);
+            }
         }
-        for (HashMap<String, Value> cv: stack_variables) {
-            if (cv.containsKey(variableName)) {
-                return cv.get(variableName);
+        else {
+            if (current_variables.containsKey(variableName)) {
+                return current_variables.get(variableName);
+            }
+            else if (global_variables.containsKey(variableName)) {
+                return global_variables.get(variableName);
             }
         }
         throw  new Exception("Variable " + variableName + " is not identified");
@@ -25,17 +34,17 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     private void setVariable(String variableName, Value value) throws Exception {
         value.setIdent(variableName);
-        if (current_variables.containsKey(variableName)) {
-            Value val = current_variables.get(variableName);
-            if (val.isConst()) throw new Exception("You cannot change the value of a constant " + variableName);
-            else current_variables.replace(variableName, value);
+        if (global) {
+            if (global_variables.containsKey(variableName)) {
+                global_variables.replace(variableName, value);
+            }
         }
-        else
-        for (HashMap<String, Value> cv: stack_variables) {
-            if (cv.containsKey(variableName)) {
-                Value val = cv.get(variableName);
-                if (val.isConst()) throw new Exception("You cannot change the value of a constant " + variableName);
-                else cv.replace(variableName, value);
+        else {
+            if (current_variables.containsKey(variableName)) {
+                current_variables.replace(variableName, value);
+            }
+            else if (global_variables.containsKey(variableName)) {
+                global_variables.replace(variableName, value);
             }
             else throw  new Exception("Variable" + variableName + " is not identified");
         }
@@ -59,19 +68,10 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     @Override
     public Object visitBlock(HelloParser.BlockContext context) {
-        boolean stack = false;
-        if (!current_variables.isEmpty()) {
-            stack_variables.push(current_variables);
-            stack = true;
-        }
-        current_variables = new HashMap<>();
         if (context.parent.getChildCount() == 2) global = true;
         else global = false;
+        if (!global) current_variables.clear();
         visitChildren(context);
-        if (stack) current_variables = stack_variables.pop();
-        else current_variables.clear();
-
-
         return null;
     }
 
@@ -83,128 +83,111 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     }
 
 
-    @Override
-    public Object visitConsts(HelloParser.ConstsContext context) {
-        for (int i = 1; i < context.getChildCount() - 1; i += 4) {
-            CommonToken token = (CommonToken) context.getChild(i).getPayload();
-            if (token.getType() == HelloParser.IDENT) {
-                String variableName = token.getText();
-                CommonToken variableToken = (CommonToken) context.getChild(i + 2).getPayload();
-                Value value;
-                switch (variableToken.getType()) {
-                    case HelloParser.INTEGER:
-                        value = new Value(variableName, "INTEGER", Integer.parseInt(variableToken.getText()), true);
-                        current_variables.put(variableName, value);
-                        if (global) {
-                            GenerateLLVM.declare_global_i64(variableName, variableToken.getText());
-                        }
-                        else {
-                            GenerateLLVM.declare_alloca_i64(variableName);
-                            GenerateLLVM.assign_i64(variableName, variableToken.getText());
-                        }
-                        break;
-                    case HelloParser.FLOAT:
-                        value = new Value(variableName, "FLOAT", Float.parseFloat(variableToken.getText()), true);
-                        current_variables.put(variableName, value);
-                        if (global) {
-                            GenerateLLVM.declare_global_double(variableName, variableToken.getText());
-                        }
-                        else {
-                            GenerateLLVM.declare_alloca_double(variableName);
-                            GenerateLLVM.assign_double(variableName, variableToken.getText());
-                        }
-                        break;
-                    case HelloParser.BOOL:
-                        value = new Value(variableName, "BOOLEAN", Boolean.parseBoolean(variableToken.getText()), true);
-                        current_variables.put(variableName, value);
-                        if (global) {
-                            GenerateLLVM.declare_global_bool(variableName, variableToken.getText());
-                        }
-                        else {
-                            GenerateLLVM.declare_alloca_bool(variableName);
-                            GenerateLLVM.assign_bool(variableName, variableToken.getText());
-                        }
-                        break;
-                    case HelloParser.STRING:
-                        String val = variableToken.getText();
-                        val = Utils.removeChatAt(val, 0);
-                        val = Utils.removeChatAt(val, val.length() - 1);
-                        value = new Value(variableName, "STRING", val, true);
-                        current_variables.put(variableName, value);
-                        break;
-                }
-            }
-        }
-        //System.out.println(current_variables.entrySet());
-        return null;
-    }
+
 
 
     @Override
     public Object visitVars(HelloParser.VarsContext context) {
-        for (int i = 1; i < context.getChildCount() - 1; i++) {
-            CommonToken token = (CommonToken) context.getChild(i).getPayload();
-            if (token.getType() == HelloParser.IDENT) {
-                String variableName = token.getText();
-                CommonToken nextToken = (CommonToken) context.getChild(i + 1).getPayload();
-                if (nextToken.getType() == HelloParser.T__2) {
-                    CommonToken variableToken = (CommonToken) context.getChild(i + 2).getPayload();
-                    Value value;
-                    switch (variableToken.getType()) {
-                        case HelloParser.INTEGER:
-                            value = new Value(variableName, "INTEGER", Integer.parseInt(variableToken.getText()), false);
-                            current_variables.put(variableName, value);
-                            if (global) {
-                                GenerateLLVM.declare_global_i64(variableName, variableToken.getText());
-                            }
-                            else {
-                                GenerateLLVM.declare_alloca_i64(variableName);
-                                GenerateLLVM.assign_i64(variableName, variableToken.getText());
-                            }
-                            break;
-                        case HelloParser.FLOAT:
-                            value = new Value(variableName, "FLOAT", Float.parseFloat(variableToken.getText()), false);
-                            current_variables.put(variableName, value);
-                            if (global) {
-                                GenerateLLVM.declare_global_double(variableName, variableToken.getText());
-                            }
-                            else {
-                                GenerateLLVM.declare_alloca_double(variableName);
-                                GenerateLLVM.assign_double(variableName, variableToken.getText());
-                            }
-                            break;
-                        case HelloParser.BOOL:
-                            value = new Value(variableName, "BOOLEAN", Boolean.parseBoolean(variableToken.getText()), false);
-                            current_variables.put(variableName, value);
-                            if (global) {
-                                GenerateLLVM.declare_global_bool(variableName, variableToken.getText());
-                            }
-                            else {
-                                GenerateLLVM.declare_alloca_bool(variableName);
-                                GenerateLLVM.assign_bool(variableName, variableToken.getText());
-                            }
-                            break;
-                        case HelloParser.STRING:
-                            String val = variableToken.getText();
-                            val = Utils.removeChatAt(val, 0);
-                            val = Utils.removeChatAt(val, val.length() - 1);
-                            value = new Value(variableName, "STRING", val, false);
-                            current_variables.put(variableName, value);
-                            break;
-                    }
-                    i += 3;
-                }
-                else
-                {
-                    current_variables.put(variableName, new Value(variableName));
-                    if (global) GenerateLLVM.declare_global_i64(variableName, "0");
-                    else GenerateLLVM.declare_alloca_i64(variableName);
-                    i += 1;
-                }
-            }
+        visitChildren(context);
+        return null;
+    }
+
+
+    //declare
+
+    @Override
+    public Object visitDeclare_int_with_value(HelloParser.Declare_int_with_valueContext context) {
+        String variableName = context.IDENT().getText();
+        String valueVar = context.INTEGER().getText();
+        Value value = new Value(variableName, "INTEGER", Integer.parseInt(valueVar));
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_i64(variableName, valueVar);
+        else {
+            GenerateLLVM.declare_alloca_i64(variableName);
+            GenerateLLVM.assign_i64(variableName, valueVar, global);
         }
         return null;
     }
+
+    @Override
+    public Object visitDeclare_int_without_value(HelloParser.Declare_int_without_valueContext context) {
+        String variableName = context.IDENT().getText();
+        Value value = new Value(variableName, "INTEGER");
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_i64(variableName, "0");
+        else GenerateLLVM.declare_alloca_i64(variableName);
+        return null;
+    }
+
+    @Override
+    public Object visitDeclare_float_with_value(HelloParser.Declare_float_with_valueContext context) {
+        String variableName = context.IDENT().getText();
+        String valueVar = context.FLOAT().getText();
+        Value value = new Value(variableName, "FLOAT", Float.parseFloat(valueVar));
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_double(variableName, valueVar);
+        else {
+            GenerateLLVM.declare_alloca_double(variableName);
+            GenerateLLVM.assign_double(variableName, valueVar, global);
+        }
+        return null;
+    }
+
+    @Override
+    public Object visitDeclare_float_without_value(HelloParser.Declare_float_without_valueContext context) {
+        String variableName = context.IDENT().getText();
+        Value value = new Value(variableName, "FLOAT");
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_double(variableName, "0.0");
+        else GenerateLLVM.declare_alloca_double(variableName);
+        return null;
+    }
+
+    @Override
+    public Object visitDeclare_bool_with_value(HelloParser.Declare_bool_with_valueContext context) {
+        String variableName = context.IDENT().getText();
+        String valueVar = context.BOOL().getText();
+        Value value = new Value(variableName, "BOOLEAN", Boolean.parseBoolean(valueVar));
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_bool(variableName, valueVar);
+        else {
+            GenerateLLVM.declare_alloca_bool(variableName);
+            GenerateLLVM.assign_bool(variableName, valueVar, global);
+        }
+        return null;
+    }
+
+    @Override
+    public  Object visitDeclare_bool_without_value(HelloParser.Declare_bool_without_valueContext context) {
+        String variableName = context.IDENT().getText();
+        Value value = new Value(variableName, "BOOLEAN");
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        if (global) GenerateLLVM.declare_global_bool(variableName, "false");
+        else GenerateLLVM.declare_alloca_bool(variableName);
+        return null;
+    }
+
+    @Override
+    public Object visitDeclare_string(HelloParser.Declare_stringContext context) {
+        String variableName = context.IDENT().getText();
+        String valueVar = context.STRING().getText();
+        valueVar = Utils.removeChatAt(valueVar, 0);
+        valueVar = Utils.removeChatAt(valueVar, valueVar.length() - 1);
+        Value value = new Value(variableName, "STRING", valueVar);
+        if (global) global_variables.put(variableName, value);
+        else current_variables.put(variableName, value);
+        GenerateLLVM.declare_string(variableName, valueVar, global, procedure);
+        return null;
+    }
+
+
+
 
     //statements
 
@@ -223,7 +206,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     public Object visitAssign(HelloParser.AssignContext context) {
         String variableName = context.IDENT().getText();
         Value value = (Value) visit(context.expr());
-        //System.out.println(variableName + " = " + value.getValue().toString());
         try {
             setVariable(variableName, value);
         }
@@ -233,8 +215,9 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         return null;
     }
 
+
     @Override
-    public Object visitPrint(HelloParser.PrintContext context) {
+    public Object visitPrint_expr(HelloParser.Print_exprContext context) {
         Value value = (Value) visit(context.expr());
         System.out.println(value.getValue().toString());
         if (value.getIdent().equals("")) {
@@ -247,19 +230,48 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
                     break;
                 case "BOOLEAN":
                     GenerateLLVM.print_bool(value.getValue().toString());
+                    break;
             }
         }
-        else switch (value.getType()) {
-            case "INTEGER":
-                GenerateLLVM.print_declare_i64(value.getIdent());
-                break;
-            case "FLOAT":
-                GenerateLLVM.print_declare_double(value.getIdent());
-                break;
-            case "BOOLEAN":
-                GenerateLLVM.print_declare_bool(value.getIdent());
+        else
+        {
+            String variableName = value.getIdent();
+            boolean global_variable = false;
+            if (current_variables.containsKey(variableName)) global_variable = false;
+            else if (global_variables.containsKey(variableName)) global_variable = true;
+            switch (value.getType()) {
+                case "INTEGER":
+                    GenerateLLVM.print_declare_i64(variableName, global_variable);
+                    break;
+                case "FLOAT":
+                    GenerateLLVM.print_declare_double(variableName, global_variable);
+                    break;
+                case "BOOLEAN":
+                    GenerateLLVM.print_declare_bool(variableName, global_variable);
+                    break;
+                case "STRING":
+                    GenerateLLVM.print_string(variableName, value.getValue().toString().length(), global_variable, procedure);
+                    break;
+            }
         }
         return null;
+    }
+
+    @Override
+    public Object visitPrint_string(HelloParser.Print_stringContext context) {
+        String text = context.STRING().getText();
+        text = Utils.removeChatAt(text, 0);
+        text = Utils.removeChatAt(text, text.length() - 1);
+        System.out.println(text);
+        if (print_string.containsKey(text)) {
+            int pos = print_string.get(text);
+            GenerateLLVM.print(text, pos);
+        }
+        else {
+            int pos = GenerateLLVM.print(text);
+            print_string.put(text, pos);
+        }
+        return  null;
     }
 
     @Override
@@ -312,7 +324,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     @Override
     public Object visitCondition_denial(HelloParser.Condition_denialContext context) {
         Value value = (Value) visit(context.condition());
-        //System.out.println(value.getType() + " " + value.getIdent() + " " + value.getValue());
         try {
             Utils.CheckBoolean(value);
         }
@@ -329,7 +340,7 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     public Object visitCondition_and(HelloParser.Condition_andContext context) {
         Value left = (Value) visit(context.condition());
         Value right = (Value) visit(context.term_cond());
-        return new Value("", Utils.Bool, ((Boolean.parseBoolean(left.getValue().toString())) && (Boolean.parseBoolean(right.getValue().toString()))), false);
+        return new Value("", Utils.Bool, ((Boolean.parseBoolean(left.getValue().toString())) && (Boolean.parseBoolean(right.getValue().toString()))));
     }
 
 
@@ -360,7 +371,7 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     public Object visitTerm_cond_or(HelloParser.Term_cond_orContext context) {
         Value left = (Value) visit(context.term_cond());
         Value right = (Value) visit(context.factor_cond());
-        return new Value("", Utils.Bool, (Boolean.parseBoolean(left.getValue().toString()) || Boolean.parseBoolean(right.getValue().toString())), false);
+        return new Value("", Utils.Bool, (Boolean.parseBoolean(left.getValue().toString()) || Boolean.parseBoolean(right.getValue().toString())));
     }
 
     //factor_cond
@@ -394,7 +405,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     @Override
     public Object visitFactor_cond_denial(HelloParser.Factor_cond_denialContext context) {
         Value value = (Value) visit(context.factor_cond());
-        //System.out.println(value.getType() + " " + value.getIdent() + " " + value.getValue());
         try {
             Utils.CheckBoolean(value);
         }
@@ -415,7 +425,6 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     @Override
     public Object visitFactor_cond_expr(HelloParser.Factor_cond_exprContext context) {
         Value result = (Value) visit(context.expr());
-        //System.out.println(result.getType() + " " + result.getIdent() + " " + result.getValue());
         try {
             Utils.CheckBoolean(result);
             return result;
@@ -433,17 +442,11 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         return (Value) visit(context.term());
     }
 
-    @Override
-    public Object visitExpr_string(HelloParser.Expr_stringContext context) {
-        String str = context.STRING().getText();
-        str = Utils.removeChatAt(str, 0);
-        str = Utils.removeChatAt(str, str.length() - 1);
-        return new Value("", "STRING", str, false);
-    }
+
 
     @Override
     public Object visitExpr_bool(HelloParser.Expr_boolContext context) {
-        return new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()), false);
+        return new Value("", "BOOLEAN", Boolean.parseBoolean(context.BOOL().getText()));
     }
 
     @Override
@@ -514,13 +517,17 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
 
     @Override
     public Object visitFactor_float(HelloParser.Factor_floatContext context) {
-        return new Value("", "FLOAT", Float.parseFloat(context.FLOAT().getText()), false);
+        return new Value("", "FLOAT", Float.parseFloat(context.FLOAT().getText()));
     }
+
+
 
     @Override
     public Object visitFactor_integer(HelloParser.Factor_integerContext context) {
-        return new Value("", "INTEGER", Integer.parseInt(context.INTEGER().getText()), false);
+        return new Value("", "INTEGER", Integer.parseInt(context.INTEGER().getText()));
     }
+
+
 
     @Override
     public Object visitFactor_ident(HelloParser.Factor_identContext context) {

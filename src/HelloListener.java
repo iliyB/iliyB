@@ -47,15 +47,15 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitVars(HelloParser.VarsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#consts}.
+	 * Enter a parse tree produced by {@link HelloParser#var}.
 	 * @param ctx the parse tree
 	 */
-	void enterConsts(HelloParser.ConstsContext ctx);
+	void enterVar(HelloParser.VarContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#consts}.
+	 * Exit a parse tree produced by {@link HelloParser#var}.
 	 * @param ctx the parse tree
 	 */
-	void exitConsts(HelloParser.ConstsContext ctx);
+	void exitVar(HelloParser.VarContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HelloParser#statement}.
 	 * @param ctx the parse tree
@@ -117,15 +117,29 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitIf_(HelloParser.If_Context ctx);
 	/**
-	 * Enter a parse tree produced by {@link HelloParser#print}.
+	 * Enter a parse tree produced by the {@code print_expr}
+	 * labeled alternative in {@link HelloParser#print}.
 	 * @param ctx the parse tree
 	 */
-	void enterPrint(HelloParser.PrintContext ctx);
+	void enterPrint_expr(HelloParser.Print_exprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HelloParser#print}.
+	 * Exit a parse tree produced by the {@code print_expr}
+	 * labeled alternative in {@link HelloParser#print}.
 	 * @param ctx the parse tree
 	 */
-	void exitPrint(HelloParser.PrintContext ctx);
+	void exitPrint_expr(HelloParser.Print_exprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code print_string}
+	 * labeled alternative in {@link HelloParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrint_string(HelloParser.Print_stringContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code print_string}
+	 * labeled alternative in {@link HelloParser#print}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrint_string(HelloParser.Print_stringContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HelloParser#break_}.
 	 * @param ctx the parse tree
@@ -279,6 +293,88 @@ public interface HelloListener extends ParseTreeListener {
 	 */
 	void exitFactor_cond_denial(HelloParser.Factor_cond_denialContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HelloParser#declare_string}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_string(HelloParser.Declare_stringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HelloParser#declare_string}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_string(HelloParser.Declare_stringContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_bool_with_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_bool_with_value(HelloParser.Declare_bool_with_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_bool_with_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_bool_with_value(HelloParser.Declare_bool_with_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_bool_without_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_bool_without_value(HelloParser.Declare_bool_without_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_bool_without_value}
+	 * labeled alternative in {@link HelloParser#declare_bool}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_bool_without_value(HelloParser.Declare_bool_without_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_float_with_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_float_with_value(HelloParser.Declare_float_with_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_float_with_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_float_with_value(HelloParser.Declare_float_with_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_float_without_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_float_without_value(HelloParser.Declare_float_without_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_float_without_value}
+	 * labeled alternative in {@link HelloParser#declare_float}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_float_without_value(HelloParser.Declare_float_without_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_int_with_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_int_with_value(HelloParser.Declare_int_with_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_int_with_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_int_with_value(HelloParser.Declare_int_with_valueContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declare_int_without_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclare_int_without_value(HelloParser.Declare_int_without_valueContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declare_int_without_value}
+	 * labeled alternative in {@link HelloParser#declare_int}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclare_int_without_value(HelloParser.Declare_int_without_valueContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code expr_op}
 	 * labeled alternative in {@link HelloParser#expr}.
 	 * @param ctx the parse tree
@@ -302,18 +398,6 @@ public interface HelloListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr_term(HelloParser.Expr_termContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code expr_string}
-	 * labeled alternative in {@link HelloParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExpr_string(HelloParser.Expr_stringContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code expr_string}
-	 * labeled alternative in {@link HelloParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExpr_string(HelloParser.Expr_stringContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code expr_bool}
 	 * labeled alternative in {@link HelloParser#expr}.

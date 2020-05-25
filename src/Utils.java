@@ -33,29 +33,27 @@ public class Utils {
         Value value;
         switch (op) {
             case "==":
-                if (type_left.equals(Bool)) value = new Value("", Bool, (Boolean.parseBoolean(left.getValue().toString()) == Boolean.parseBoolean(right.getValue().toString())), false);
-                else if (type_left.equals(str)) value = new Value("", Bool, left.getValue().toString().equals(right.getValue().toString()), false);
-                else value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) == Float.parseFloat(right.getValue().toString())), false);
+                if (type_left.equals(Bool)) value = new Value("", Bool, (Boolean.parseBoolean(left.getValue().toString()) == Boolean.parseBoolean(right.getValue().toString())));
+                else value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) == Float.parseFloat(right.getValue().toString())));
                 break;
             case "!=":
-                if (type_left.equals(Bool)) value = new Value("", Bool, (Boolean.parseBoolean(left.getValue().toString()) != Boolean.parseBoolean(right.getValue().toString())), false);
-                else if (type_left.equals(str)) value = new Value("", Bool, (!left.getValue().toString().equals(right.getValue().toString())), false);
-                else value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) != Float.parseFloat(right.getValue().toString())), false);
+                if (type_left.equals(Bool)) value = new Value("", Bool, (Boolean.parseBoolean(left.getValue().toString()) != Boolean.parseBoolean(right.getValue().toString())));
+                else value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) != Float.parseFloat(right.getValue().toString())));
                 break;
             case ">=":
-                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) >= Float.parseFloat(right.getValue().toString())), false);
+                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) >= Float.parseFloat(right.getValue().toString())));
                 else throw new Exception(">= can't accept bool and string types");
                 break;
             case "<=":
-                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) <= Float.parseFloat(right.getValue().toString())), false);
+                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) <= Float.parseFloat(right.getValue().toString())));
                 else throw new Exception("<= can't accept bool and string types");
                 break;
             case ">":
-                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) > Float.parseFloat(right.getValue().toString())), false);
+                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) > Float.parseFloat(right.getValue().toString())));
                 else throw new Exception("> can't accept bool and string types");
                 break;
             case "<":
-                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) < Float.parseFloat(right.getValue().toString())), false);
+                if ((type_left.equals(Int)) || (type_left.equals(Flo))) value = new Value("", Bool, (Float.parseFloat(left.getValue().toString()) < Float.parseFloat(right.getValue().toString())));
                 else throw new Exception("< can't accept bool and string types");
                 break;
             default:
@@ -71,13 +69,13 @@ public class Utils {
         String type2 = v2.getType();
         Value value;
         if ((type1.equals(Int)) && (type2.equals(Int))) {
-            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Integer.parseInt(v2.toString()), false);
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Integer.parseInt(v2.toString()));
         } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) / Float.parseFloat(v2.toString()));
         } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Float.parseFloat(v1.toString()) / Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) / Float.parseFloat(v2.toString()));
         } else
-            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) / Integer.parseInt(v2.toString()), false);
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) / Integer.parseInt(v2.toString()));
 
         return value;
     }
@@ -87,13 +85,13 @@ public class Utils {
         String type2 = v2.getType();
         Value value;
         if ((type1.equals(Int)) && (type2.equals(Int))) {
-            value = new Value("", Int, Integer.parseInt(v1.toString()) * Integer.parseInt(v2.toString()), false);
+            value = new Value("", Int, Integer.parseInt(v1.toString()) * Integer.parseInt(v2.toString()));
         } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Integer.parseInt(v1.toString()) * Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) * Float.parseFloat(v2.toString()));
         } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Float.parseFloat(v1.toString()) * Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) * Float.parseFloat(v2.toString()));
         } else
-            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) * Integer.parseInt(v2.toString()), false);
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) * Integer.parseInt(v2.toString()));
 
         return value;
     }
@@ -103,13 +101,13 @@ public class Utils {
         String type2 = v2.getType();
         Value value;
         if ((type1.equals(Int)) && (type2.equals(Int))) {
-            value = new Value("", Int, Integer.parseInt(v1.toString()) - Integer.parseInt(v2.toString()), false);
+            value = new Value("", Int, Integer.parseInt(v1.toString()) - Integer.parseInt(v2.toString()));
         } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Integer.parseInt(v1.toString()) - Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) - Float.parseFloat(v2.toString()));
         } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Float.parseFloat(v1.toString()) - Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) - Float.parseFloat(v2.toString()));
         } else
-            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) - Integer.parseInt(v2.toString()), false);
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) - Integer.parseInt(v2.toString()));
 
         return value;
     }
@@ -119,13 +117,13 @@ public class Utils {
         String type2 = v2.getType();
         Value value;
         if ((type1.equals(Int)) && (type2.equals(Int))) {
-            value = new Value("", Int, Integer.parseInt(v1.toString()) + Integer.parseInt(v2.toString()), false);
+            value = new Value("", Int, Integer.parseInt(v1.toString()) + Integer.parseInt(v2.toString()));
         } else if ((type1.equals(Int)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Integer.parseInt(v1.toString()) + Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Integer.parseInt(v1.toString()) + Float.parseFloat(v2.toString()));
         } else if ((type1.equals(Flo)) && (type2.equals(Flo))) {
-            value = new Value("", Flo, Float.parseFloat(v1.toString()) + Float.parseFloat(v2.toString()), false);
+            value = new Value("", Flo, Float.parseFloat(v1.toString()) + Float.parseFloat(v2.toString()));
         } else
-            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) + Integer.parseInt(v2.toString()), false);
+            value = value = new Value("", Flo, Float.parseFloat(v1.toString()) + Integer.parseInt(v2.toString()));
 
         return value;
     }
