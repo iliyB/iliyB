@@ -36,15 +36,66 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         value.setIdent(variableName);
         if (global) {
             if (global_variables.containsKey(variableName)) {
-                global_variables.replace(variableName, value);
+                Value cur_value = global_variables.get(variableName);
+                if (cur_value.getType().equals(value.getType())) {
+                    global_variables.replace(variableName, value);
+                    switch (value.getType()) {
+                        case "INTEGER":
+                            GenerateLLVM.assign_int(variableName, value.getValue().toString(),global);
+                            break;
+                        case "FLOAT":
+                            GenerateLLVM.assign_double(variableName, value.getValue().toString(),global);
+                            break;
+                        case "BOOLEAN":
+                            GenerateLLVM.assign_bool(variableName, value.getValue().toString(),global);
+                            break;
+                        default:
+                            throw  new Exception("Variable" + variableName + " has a wrong type");
+                    }
+                }
+                else throw  new Exception("Variable" + variableName + " has a different type");
             }
         }
         else {
             if (current_variables.containsKey(variableName)) {
-                current_variables.replace(variableName, value);
+                Value cur_value = current_variables.get(variableName);
+                if (cur_value.getType().equals(value.getType())) {
+                    current_variables.replace(variableName, value);
+                    switch (value.getType()) {
+                        case "INTEGER":
+                            GenerateLLVM.assign_int(variableName, value.getValue().toString(),global);
+                            break;
+                        case "FLOAT":
+                            GenerateLLVM.assign_double(variableName, value.getValue().toString(),global);
+                            break;
+                        case "BOOLEAN":
+                            GenerateLLVM.assign_bool(variableName, value.getValue().toString(),global);
+                            break;
+                        default:
+                            throw  new Exception("Variable" + variableName + " has a wrong type");
+                    }
+                }
+                else throw  new Exception("Variable" + variableName + " has a different type");
             }
             else if (global_variables.containsKey(variableName)) {
-                global_variables.replace(variableName, value);
+                Value cur_value = global_variables.get(variableName);
+                if (cur_value.getType().equals(value.getType())) {
+                    global_variables.replace(variableName, value);
+                    switch (value.getType()) {
+                        case "INTEGER":
+                            GenerateLLVM.assign_int(variableName, value.getValue().toString(),false);
+                            break;
+                        case "FLOAT":
+                            GenerateLLVM.assign_double(variableName, value.getValue().toString(),false);
+                            break;
+                        case "BOOLEAN":
+                            GenerateLLVM.assign_bool(variableName, value.getValue().toString(),false);
+                            break;
+                        default:
+                            throw  new Exception("Variable" + variableName + " has a wrong type");
+                    }
+                }
+                else throw  new Exception("Variable" + variableName + " has a different type");
             }
             else throw  new Exception("Variable" + variableName + " is not identified");
         }
@@ -62,7 +113,7 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         visitChildren(context);
         System.out.println();
         System.out.println();
-        System.out.println(GenerateLLVM.generate());
+        GenerateLLVM.generate();
         return null;
     }
 
@@ -102,10 +153,10 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         Value value = new Value(variableName, "INTEGER", Integer.parseInt(valueVar));
         if (global) global_variables.put(variableName, value);
         else current_variables.put(variableName, value);
-        if (global) GenerateLLVM.declare_global_i64(variableName, valueVar);
+        if (global) GenerateLLVM.declare_global_int(variableName, valueVar);
         else {
-            GenerateLLVM.declare_alloca_i64(variableName);
-            GenerateLLVM.assign_i64(variableName, valueVar, global);
+            GenerateLLVM.declare_alloca_int(variableName);
+            GenerateLLVM.assign_int(variableName, valueVar, global);
         }
         return null;
     }
@@ -116,8 +167,8 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         Value value = new Value(variableName, "INTEGER");
         if (global) global_variables.put(variableName, value);
         else current_variables.put(variableName, value);
-        if (global) GenerateLLVM.declare_global_i64(variableName, "0");
-        else GenerateLLVM.declare_alloca_i64(variableName);
+        if (global) GenerateLLVM.declare_global_int(variableName, "0");
+        else GenerateLLVM.declare_alloca_int(variableName);
         return null;
     }
 
@@ -532,7 +583,22 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     @Override
     public Object visitFactor_ident(HelloParser.Factor_identContext context) {
         try {
-            return getVariable(context.IDENT().getText());
+            Value value = getVariable(context.IDENT().getText());
+            boolean global;
+            if (global_variables.containsKey(value.getIdent()))  global = true;
+            else global = false;
+            switch (value.getType()) {
+                case "INTEGER":
+                    value.setRef(GenerateLLVM.load_int(value.getIdent(), global));
+                    break;
+                case "FLOAT":
+                    value.setRef(GenerateLLVM.load_double(value.getIdent(), global));
+                    break;
+                case "BOOLEAN":
+                    value.setRef(GenerateLLVM.load_bool(value.getIdent(), global));
+                    break;
+            }
+            return value;
         }
         catch (Exception e) {
             e.printStackTrace();

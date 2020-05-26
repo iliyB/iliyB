@@ -8,6 +8,7 @@ public class Value {
     private Type type;
     private Object value;
     private String ident;
+    private int ref = -1;
 
 
     public Object getValue() {
@@ -33,8 +34,27 @@ public class Value {
         this.value = value;
     }
 
+    public Value(String ident, String type, Object value, int ref) {
+        this.ident = ident;
+        this.type = SetType(type);
+        this.value = value;
+        this.ref = ref;
+    }
+
     public String getIdent() {
         return this.ident;
+    }
+
+    public int getRef() {
+        return this.ref;
+    }
+
+    public void setRef(int ref) {
+        this.ref = ref;
+    }
+
+    public boolean checkRef() {
+        return (this.ref != -1);
     }
 
 

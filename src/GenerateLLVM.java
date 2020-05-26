@@ -1,3 +1,6 @@
+import java.io.FileWriter;
+import java.util.Stack;
+
 class GenerateLLVM {
     static int reg = 1;
 
@@ -7,6 +10,10 @@ class GenerateLLVM {
     private static int str_i = 0;
     private static int main_reg = 1;
     private static int br = 0;
+    private static int br_while_end;
+    private static int br_while_continue;
+
+    static Stack<Integer> br_stack = new Stack<>();
 
 
     static String generate() {
@@ -22,10 +29,16 @@ class GenerateLLVM {
         text += "@strsd = constant [4 x i8] c\"%lf\\00\"\n";
         text += "\n";
         text += header_text;
-        text += "define i32 @main() nounwind {\n";
+        text += "\n\ndefine i32 @main() nounwind {\n";
         text += main_text;
         text += "  ret i32 0\n";
         text += "}\n";
+        try(FileWriter writer = new FileWriter("/home/iliy/llvm/hello.ll", false)) {
+            writer.write(text);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return text;
     }
 
@@ -65,11 +78,11 @@ class GenerateLLVM {
         }
     }
 
-    static void declare_global_i64(String ident, String value) {
+    static void declare_global_int(String ident, String value) {
         header_text += "@" + ident + " = global i64 " + value + "\n";
     }
 
-    static void declare_alloca_i64(String ident) {
+    static void declare_alloca_int(String ident) {
         buffer += "%" + ident + " = alloca i64\n";
     }
 
@@ -92,7 +105,7 @@ class GenerateLLVM {
 
     //assign
 
-    static void assign_i64(String ident, String value, boolean global) {
+    static void assign_int(String ident, String value, boolean global) {
         if (global) {
             buffer += "store i64 " + value + ", i64* @" + ident + "\n";
         }
@@ -208,6 +221,569 @@ class GenerateLLVM {
         reg++;
     }
 
+    //translate
+
+    static int translate_int_to_float(int _reg) {
+        buffer += "%" + reg + " = sitofp i64 %" + _reg + " to double\n";
+        reg++;
+        return reg - 1;
+    }
+
+    static int translate_float_to_int(int _reg) {
+        buffer += "%" + reg + " = fptosi double %" + _reg + " to i64\n";
+        reg++;
+        return reg - 1;
+    }
+
+    //op
+
+    static int sum_int(int ref1, int ref2) {
+        buffer += "%" + reg + " = add i64 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_int(String value1, int ref2) {
+        buffer += "%" + reg + " = add i64 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_int(int ref1, String value2) {
+        buffer += "%" + reg + " = add i64 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_int(String value1, String value2) {
+        buffer += "%" + reg + " = add i64 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int sum_double(int ref1, int ref2) {
+        buffer += "%" + reg + " = fadd double %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_double(String value1, int ref2) {
+        buffer += "%" + reg + " = fadd double " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_double(int ref1, String value2) {
+        buffer += "%" + reg + " = fadd double %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sum_double(String value1, String value2) {
+        buffer += "%" + reg + " = fadd double " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int sub_int(int ref1, int ref2) {
+        buffer += "%" + reg + " = sub i64 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_int(String value1, int ref2) {
+        buffer += "%" + reg + " = sub i64 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_int(int ref1, String value2) {
+        buffer += "%" + reg + " = sub i64 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_int(String value1, String value2) {
+        buffer += "%" + reg + " = sub i64 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int sub_double(int ref1, int ref2) {
+        buffer += "%" + reg + " = fsub double %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_double(String value1, int ref2) {
+        buffer += "%" + reg + " = fsub double " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_double(int ref1, String value2) {
+        buffer += "%" + reg + " = fsub double %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int sub_double(String value1, String value2) {
+        buffer += "%" + reg + " = fsub double " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int mult_int(int ref1, int ref2) {
+        buffer += "%" + reg + " = mul i64 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_int(String value1, int ref2) {
+        buffer += "%" + reg + " = mul i64 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_int(int ref1, String value2) {
+        buffer += "%" + reg + " = mul i64 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_int(String value1, String value2) {
+        buffer += "%" + reg + " = mul i64 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int mult_double(int ref1, int ref2) {
+        buffer += "%" + reg + " = fmul double %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_double(String value1, int ref2) {
+        buffer += "%" + reg + " = fmul double " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_double(int ref1, String value2) {
+        buffer += "%" + reg + " = fmul double %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int mult_double(String value1, String value2) {
+        buffer += "%" + reg + " = fmul double " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int div_int(int ref1, int ref2) {
+        buffer += "%" + reg + " = sdiv i64 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_int(String value1, int ref2) {
+        buffer += "%" + reg + " = sdiv i64 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_int(int ref1, String value2) {
+        buffer += "%" + reg + " = sdiv i64 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_int(String value1, String value2) {
+        buffer += "%" + reg + " = sdiv i64 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    static int div_double(int ref1, int ref2) {
+        buffer += "%" + reg + " = fdiv double %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_double(String value1, int ref2) {
+        buffer += "%" + reg + " = fdiv double " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_double(int ref1, String value2) {
+        buffer += "%" + reg + " = fdiv double %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+    static int div_double(String value1, String value2) {
+        buffer += "%" + reg + " = fdiv double " + value1 + ", " + value2 + "\n";
+        reg++;
+        return  reg - 1;
+    }
+
+    //load
+    static int load_int(String ident, boolean global) {
+        if (global) {
+            buffer += "%" + reg + " = load i64, i64* @" + ident + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = load i64, i64* %" + ident + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int load_double(String ident, boolean global) {
+        if (global) {
+            buffer += "%" + reg + " = load double, double* @" + ident + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = load double, double* %" + ident + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int load_bool(String ident, boolean global) {
+        if (global) {
+            buffer += "%" + reg + " = load i1, i1* @" + ident + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = load i1, i1* %" + ident + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    //or, and, !
+    static int or(int ref1, int ref2) {
+        buffer += "%" + reg + " = or i1 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int or(String value1, int ref2) {
+        buffer += "%" + reg + " = or i1 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int or(int ref1, String value2) {
+        buffer += "%" + reg + " = or i1 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int or(String value1, String value2) {
+        buffer += "%" + reg + " = or i1 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+
+    static int and(int ref1, int ref2) {
+        buffer += "%" + reg + " = and i1 %" + ref1 + ", %" + ref2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int and(String value1, int ref2) {
+        buffer += "%" + reg + " = and i1 " + value1 + ", %" + ref2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int and(int ref1, String value2) {
+        buffer += "%" + reg + " = and i1 %" + ref1 + ", " + value2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int and(String value1, String value2) {
+        buffer += "%" + reg + " = and i1 " + value1 + ", " + value2 + "\n";
+        reg++;
+        return reg - 1;
+    }
+
+    static int denial(int ref) {
+        buffer += "%" + reg + " = xor i1 %" + ref + ", %" + ref + "\n";
+        reg++;
+        return reg - 1;
+    }
+    static int denial(String value) {
+        buffer += "%" + reg + " = xor i1 %" + value + ", %" + value + "\n";
+        reg++;
+        return reg - 1;
+    }
+
+    //icmp
+
+    static int eq(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp eq i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else if (type.equals("FLOAT")){
+            buffer += "%" + reg + " = icmp eq double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp eq i1 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int eq(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp eq i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp eq double " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp eq i1 " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int eq(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp eq i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp eq double %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp eq i1 %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int eq(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp eq i64 " + value1 + ", " + value2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp eq double " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp eq i1 " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int no_eq(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp ne i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp ne double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp ne i1 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int no_eq(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp ne i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp ne double " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp ne i1 " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int no_eq(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp ne i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp ne double %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp ne i1 %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int no_eq(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp ne i64 " + value1 + ", " + value2 + "\n";
+        }
+        else if (type.equals("FLOAT")) {
+            buffer += "%" + reg + " = icmp ne double " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp ne i1 " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int more(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sgt i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sgt double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sgt i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sgt double " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sgt i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sgt double %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sgt i64 " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sgt double " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int more_eq(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sge i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sge double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more_eq(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sge i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sge double " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more_eq(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sge i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sge double %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int more_eq(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sge i64 " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sge double " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int less(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp slt i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp slt double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp slt i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp slt double " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp slt i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp slt double %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp slt i64 " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp slt double " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+    static int less_eq(int ref1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sle i64 %" + ref1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sle double %" + ref1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less_eq(String value1, int ref2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sle i64 " + value1 + ", %" + ref2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sle double " + value1 + ", %" + ref2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less_eq(int ref1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sle i64 %" + ref1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sle double %" + ref1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+    static int less_eq(String value1, String value2, String type) {
+        if (type.equals("INTEGER")) {
+            buffer += "%" + reg + " = icmp sle i64 " + value1 + ", " + value2 + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = icmp sle double " + value1 + ", " + value2 + "\n";
+        }
+        reg++;
+        return reg - 1;
+    }
+
+
+    static void if_start(int ref) {
+        br++;
+        buffer += "br i1 %" + ref + ", label %true" + br + ", label %false" + br + "\n";
+        buffer += "true" + br + ":\n";
+        br_stack.push(br);
+    }
+    static void if_start(String value) {
+        br++;
+        buffer += "br i1 %" + value + ", label %true" + br + ", label %false" + br + "\n";
+        buffer += "true" + br + ":\n";
+        br_stack.push(br);
+    }
+
+    static void if_end() {
+        int b = br_stack.pop();
+        buffer += "br label %false" + b + "\n";
+        buffer += "false" + b + ":\n";
+    }
 
 
     private static void formatMainText() {
