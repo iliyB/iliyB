@@ -1,0 +1,41 @@
+VAR int x = 2, double q = 2.7, int y;
+VAR boolean j = true, string s = "hello my friend";
+VAR int max = 100, boolean db = true;
+
+PROCEDURE proc1;
+VAR int i = 2, int x;
+VAR int l = 23;
+BEGIN
+  i := 4;
+  x := 20;
+  WHILE (i < x) DO
+  BEGIN
+    i := i + 2;
+    PRINT("New value i");
+    PRINT(i);
+  END;
+  x := l - 10 + x * (max - 50);
+  PRINT("New value x");
+  PRINT(x);
+END;
+
+
+BEGIN
+  y := 2;
+  q := 2 + q;
+  IF ((db) AND (max > x)) THEN
+  BEGIN
+    PRINT(s);
+  END;
+  IF !((y != 2) OR ((db) AND (max > x))) THEN
+  BEGIN
+    PRINT("It's false!!");
+  END;
+  PRINT("Value q");
+  PRINT(q);
+  db := false;
+  PRINT("New value db");
+  PRINT(db);
+  PRINT("PROCEDURE START");
+  CALL proc1;
+END.
