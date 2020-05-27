@@ -2,16 +2,16 @@ import java.io.FileWriter;
 import java.util.Stack;
 
 class GenerateLLVM {
-    static int reg = 1;
+    static int reg = 0;
 
     private static String header_text = "";
     private static String main_text = "";
     private static String buffer = "";
     private static int str_i = 0;
-    private static int main_reg = 1;
+    private static int main_reg = 0;
     private static int br = 0;
-    private static int br_while_end;
-    private static int br_while_continue;
+    static Stack<Integer> br_loop= new Stack<>();
+    static boolean stack_pop;
 
     static Stack<Integer> br_stack = new Stack<>();
 
@@ -30,6 +30,7 @@ class GenerateLLVM {
         text += "\n";
         text += header_text;
         text += "\n\ndefine i32 @main() nounwind {\n";
+        text += "entry:\n";
         text += main_text;
         text += "  ret i32 0\n";
         text += "}\n";
@@ -48,8 +49,9 @@ class GenerateLLVM {
     static void function_start(String id) {
         main_text += buffer;
         main_reg = reg;
-        buffer = "define void @" + id + "() nounwind {\n";
-        reg = 1;
+        buffer = "\n\ndefine void @" + id + "() nounwind {\n";
+        buffer += "entry:\n";
+        reg = 0;
     }
 
     static void function_end() {
@@ -113,6 +115,14 @@ class GenerateLLVM {
             buffer += "store i64 " + value + ", i64* %" + ident + "\n";
         }
     }
+    static void assign_int(String ident, int ref, boolean global) {
+        if (global) {
+            buffer += "store i64 %" + ref + ", i64* @" + ident + "\n";
+        }
+        else {
+            buffer += "store i64 %" + ref + ", i64* %" + ident + "\n";
+        }
+    }
 
     static void assign_double(String ident, String value, boolean global) {
         if (global) {
@@ -122,6 +132,14 @@ class GenerateLLVM {
             buffer += "store double " + value + ", double* %" + ident + "\n";
         }
     }
+    static void assign_double(String ident, int ref, boolean global) {
+        if (global) {
+            buffer += "store double %" + ref + ", double* @" + ident + "\n";
+        }
+        else {
+            buffer += "store double %" + ref + ", double* %" + ident + "\n";
+        }
+    }
 
     static void assign_bool(String ident, String value, boolean global) {
         if (global) {
@@ -129,6 +147,14 @@ class GenerateLLVM {
         }
         else {
             buffer += "store i1 " + value + ", i1* %" + ident + "\n";
+        }
+    }
+    static void assign_bool(String ident, int ref, boolean global) {
+        if (global) {
+            buffer += "store i1 %" + ref + ", i1* @" + ident + "\n";
+        }
+        else {
+            buffer += "store i1 %" + ref + ", i1* %" + ident + "\n";
         }
     }
 
@@ -765,6 +791,7 @@ class GenerateLLVM {
         return reg - 1;
     }
 
+    //if
 
     static void if_start(int ref) {
         br++;
@@ -784,6 +811,51 @@ class GenerateLLVM {
         buffer += "br label %false" + b + "\n";
         buffer += "false" + b + ":\n";
     }
+
+
+    //while
+
+    static void while_start() {
+        stack_pop = false;
+        br++;
+        buffer += "br label %while" + br + "\n";
+        buffer += "while" + br + ":\n";
+        br_loop.push(br);
+    }
+
+    static void while_condition(int ref) {
+        buffer += "br i1 %" + ref + ", label %true" + br + ", label %false" + br + "\n";
+        buffer += "true" + br + ":\n";
+        br_stack.push(br);
+    }
+
+    static void while_condition(String value) {
+        buffer += "br i1 " + value + ", label %true" + br + ", label %false" + br + "\n";
+        buffer += "true" + br + ":\n";
+        br_stack.push(br);
+    }
+
+    static void while_end() {
+        int b = br_stack.pop();
+        buffer += "br label %while" + b + "\n";
+        buffer += "false" + b + ":\n";
+        if (!stack_pop) br_loop.pop();
+    }
+
+    static void Continue() {
+        int b = br_loop.pop();
+        buffer += "br label %while" + b + "\n";
+        br_loop.push(b);
+        reg++;
+    }
+
+    static void Break() {
+        int b = br_loop.pop();
+        reg++;
+        stack_pop = true;
+        buffer += "br label %false" + b + "\n";
+    }
+
 
 
     private static void formatMainText() {

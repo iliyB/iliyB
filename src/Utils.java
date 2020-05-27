@@ -463,6 +463,52 @@ public class Utils {
         return value;
     }
 
+    public static Value And(Value v1, Value v2) {
+        Value value = new Value("", Utils.Bool, (Boolean.parseBoolean(v1.getValue().toString()) && Boolean.parseBoolean(v2.getValue().toString())));
+        if ((v1.checkRef()) && (v2.checkRef())) {
+            value.setRef(GenerateLLVM.and(v1.getRef(), v2.getRef()));
+        }
+        else if (v1.checkRef()) {
+            value.setRef(GenerateLLVM.and(v1.getRef(), v2.getValue().toString()));
+        }
+        else if (v2.checkRef()) {
+            value.setRef(GenerateLLVM.and(v1.getValue().toString(), v2.getRef()));
+        }
+        else {
+            value.setRef(GenerateLLVM.and(v1.getValue().toString(), v2.getValue().toString()));
+        }
+        return value;
+    }
+
+    public static Value Or(Value v1, Value v2) {
+        Value value = new Value("", Utils.Bool, (Boolean.parseBoolean(v1.getValue().toString()) || Boolean.parseBoolean(v2.getValue().toString())));
+        if ((v1.checkRef()) && (v2.checkRef())) {
+            value.setRef(GenerateLLVM.or(v1.getRef(), v2.getRef()));
+        }
+        else if (v1.checkRef()) {
+            value.setRef(GenerateLLVM.or(v1.getRef(), v2.getValue().toString()));
+        }
+        else if (v2.checkRef()) {
+            value.setRef(GenerateLLVM.or(v1.getValue().toString(), v2.getRef()));
+        }
+        else {
+            value.setRef(GenerateLLVM.or(v1.getValue().toString(), v2.getValue().toString()));
+        }
+        return value;
+    }
+
+    public static Value Denial(Value value) {
+        boolean val = Boolean.parseBoolean(value.getValue().toString());
+        if (value.checkRef()) {
+            value.setRef(GenerateLLVM.denial(value.getRef()));
+        }
+        else
+        {
+            value.setRef(GenerateLLVM.denial(value.getValue().toString()));
+        }
+        value.setValue(!val);
+        return value;
+    }
 
     public static Value Div(Value v1, Value v2) {
         String type1 = v1.getType();

@@ -4,12 +4,16 @@ VAR int max = 100, boolean db = true;
 
 PROCEDURE proc1;
 VAR int i = 2, int x;
-VAR int l = 23;
+VAR int l = 23, string p = "in function string";
 BEGIN
   i := 4;
-  x := 20;
+  x := 40;
   WHILE (i < x) DO
   BEGIN
+    IF (i > 20) THEN
+    BEGIN
+        BREAK;
+    END;
     i := i + 2;
     PRINT("New value i");
     PRINT(i);
@@ -17,6 +21,7 @@ BEGIN
   x := l - 10 + x * (max - 50);
   PRINT("New value x");
   PRINT(x);
+  PRINT(p);
 END;
 
 
