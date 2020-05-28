@@ -164,6 +164,7 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
         visitChildren(context);
         System.out.println("Complete");;
         GenerateLLVM.generate();
+        OptimizationLLVM.optimization();
         return null;
     }
 

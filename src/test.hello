@@ -1,10 +1,12 @@
 VAR int x = 2, double q = 2.7, int y;
 VAR boolean j = true, string s = "hello my friend";
 VAR int max = 100, boolean db = true;
+VAR int g, string q123 = "qw12";
 
 PROCEDURE proc1;
 VAR int i = 2, int x;
 VAR int l = 23, string p = "in function string";
+VAR double f = 2.2;
 BEGIN
   i := 4;
   x := 40;
@@ -28,6 +30,7 @@ END;
 BEGIN
   y := 2;
   q := 2 + q;
+  x := 3;
   IF ((db) AND (max > x)) THEN
   BEGIN
     PRINT(s);

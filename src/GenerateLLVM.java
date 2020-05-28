@@ -25,8 +25,6 @@ class GenerateLLVM {
         text += "@strpi = constant [4 x i8] c\"%d\\0A\\00\"\n";
         text += "@strpd = constant [4 x i8] c\"%f\\0A\\00\"\n";
         text += "@strps = constant [4 x i8] c\"%s\\0A\\00\"\n";
-        text += "@strsi = constant [3 x i8] c\"%d\\00\"\n";
-        text += "@strsd = constant [4 x i8] c\"%lf\\00\"\n";
         text += "\n";
         text += header_text;
         text += "\n\ndefine i32 @main() nounwind {\n";
@@ -74,9 +72,9 @@ class GenerateLLVM {
         int len = value.length() + 1;
         String str_type = "[" + len + " x i8]";
         if (global) {
-            header_text += "@" + ident + " = constant" + str_type + " c\"" + value + "\\00\"\n";
+            header_text += "@" + ident + " = constant " + str_type + " c\"" + value + "\\00\"\n";
         } else {
-            header_text += "@" + procedure + "." + ident + " = constant" + str_type + " c\"" + value + "\\00\"\n";
+            header_text += "@" + procedure + "." + ident + " = constant " + str_type + " c\"" + value + "\\00\"\n";
         }
     }
 
@@ -162,7 +160,7 @@ class GenerateLLVM {
     static int print(String text) {
         int str_len = text.length();
         String str_type = "[" + (str_len + 2) + " x i8]";
-        header_text += "@str" + str_i + " = constant" + str_type + " c\"" + text + "\\0A\\00\"\n";
+        header_text += "@str" + str_i + " = constant " + str_type + " c\"" + text + "\\0A\\00\"\n";
         buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ( " + str_type + ", " + str_type + "* @str" + str_i + ", i32 0, i32 0))\n";
         str_i++;
         reg++;
@@ -223,52 +221,10 @@ class GenerateLLVM {
     }
 
 
-    static void print_declare_i64(String ident, boolean global) {
-        if (global) {
-            buffer += "%" + reg + " = load i64, i64* @" + ident + "\n";
-        }
-        else {
-            buffer += "%" + reg + " = load i64, i64* %" + ident + "\n";
-        }
-        reg++;
-        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i64 %" + (reg - 1) + ")\n";
-        reg++;
-    }
-
-    static void print_declare_double(String ident, boolean global) {
-        if (global) {
-            buffer += "%" + reg + " = load double, double* @" + ident + "\n";
-        }
-        else {
-            buffer += "%" + reg + " = load double, double* %" + ident + "\n";
-        }
-        reg++;
-        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + (reg - 1) + ")\n";
-        reg++;
-    }
-
-    static void print_declare_bool(String ident, boolean global) {
-        if (global) {
-            buffer += "%" + reg + " = load i1, i1* @" + ident + "\n";
-        }
-        else {
-            buffer += "%" + reg + " = load i1, i1* %" + ident + "\n";
-        }
-        reg++;
-        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i1 %" + (reg - 1) + ")\n";
-        reg++;
-    }
-
     //translate
 
     static int translate_int_to_float(int _reg) {
         buffer += "%" + reg + " = sitofp i64 %" + _reg + " to double\n";
-        reg++;
-        return reg - 1;
-    }
-
-    static int translate_float_to_int(int _reg) {
-        buffer += "%" + reg + " = fptosi double %" + _reg + " to i64\n";
         reg++;
         return reg - 1;
     }
