@@ -178,10 +178,14 @@ class GenerateLLVM {
     }
 
 
-    static void print_i64(String text) {
+    static void print_int(String text) {
         buffer += "%" + reg + " = add i64 0, " + text + "\n";
         reg++;
         buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i64 %" + (reg - 1) + ")\n";
+        reg++;
+    }
+    static void print_int(int ref) {
+        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i64 %" + ref + ")\n";
         reg++;
     }
 
@@ -191,11 +195,19 @@ class GenerateLLVM {
         buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + (reg - 1) + ")\n";
         reg++;
     }
+    static void print_double(int ref) {
+        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpd, i32 0, i32 0), double %" + ref + ")\n";
+        reg++;
+    }
 
     static void print_bool(String text) {
         buffer += "%" + reg + " = and i1 " + text + ", " + text + "\n";
         reg++;
         buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i1 %" + (reg - 1) + ")\n";
+        reg++;
+    }
+    static void print_bool(int ref) {
+        buffer += "%" + reg + " = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @strpi, i32 0, i32 0), i1 %" + ref + ")\n";
         reg++;
     }
 

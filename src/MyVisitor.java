@@ -325,40 +325,38 @@ public class MyVisitor  extends HelloBaseVisitor<Object> {
     public Object visitPrint_expr(HelloParser.Print_exprContext context) {
         Value value = (Value) visit(context.expr());
         //System.out.println(value.getValue().toString());
-        if (value.getIdent().equals("")) {
             switch (value.getType()) {
                 case "INTEGER":
-                    GenerateLLVM.print_i64(value.getValue().toString());
+                    if (value.checkRef()) {
+                        GenerateLLVM.print_int(value.getRef());
+                    }
+                    else {
+                        GenerateLLVM.print_int(value.getValue().toString());
+                    }
                     break;
                 case "FLOAT":
-                    GenerateLLVM.print_double(value.getValue().toString());
+                    if (value.checkRef()) {
+                        GenerateLLVM.print_double(value.getRef());
+                    }
+                    else {
+                        GenerateLLVM.print_double(value.getValue().toString());
+                    }
                     break;
                 case "BOOLEAN":
-                    GenerateLLVM.print_bool(value.getValue().toString());
-                    break;
-            }
-        }
-        else
-        {
-            String variableName = value.getIdent();
-            boolean global_variable = false;
-            if (current_variables.containsKey(variableName)) global_variable = false;
-            else if (global_variables.containsKey(variableName)) global_variable = true;
-            switch (value.getType()) {
-                case "INTEGER":
-                    GenerateLLVM.print_declare_i64(variableName, global_variable);
-                    break;
-                case "FLOAT":
-                    GenerateLLVM.print_declare_double(variableName, global_variable);
-                    break;
-                case "BOOLEAN":
-                    GenerateLLVM.print_declare_bool(variableName, global_variable);
+                    if (value.checkRef()) {
+                        GenerateLLVM.print_bool(value.getRef());
+                    }
+                    else {
+                        GenerateLLVM.print_bool(value.getValue().toString());
+                    }
                     break;
                 case "STRING":
-                    GenerateLLVM.print_string(variableName, value.getValue().toString().length(), global_variable, procedure);
+                    boolean global_variable = false;
+                    if (current_variables.containsKey(value.getIdent())) global_variable = false;
+                    else if (global_variables.containsKey(value.getIdent())) global_variable = true;
+                    GenerateLLVM.print_string(value.getIdent(), value.getValue().toString().length(), global_variable, procedure);
                     break;
             }
-        }
         return null;
     }
 
