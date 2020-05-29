@@ -4,12 +4,12 @@ VAR int max = 100, boolean db = true;
 VAR int g, string q123 = "qw12";
 
 PROCEDURE proc1;
-VAR int i = 2, int x;
+VAR int i = 2, double x;
 VAR int l = 23, string p = "in function string";
 VAR double f = 2.2;
 BEGIN
   i := 4;
-  x := 40;
+  x := 40.1;
   WHILE (i < x) DO
   BEGIN
     IF (i > 20) THEN
