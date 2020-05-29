@@ -482,7 +482,12 @@ class GenerateLLVM {
         return reg - 1;
     }
     static int denial(String value) {
-        buffer += "%" + reg + " = xor i1 %" + value + ", %" + value + "\n";
+        if (Boolean.parseBoolean(value)) {
+            buffer += "%" + reg + " = xor i1 " + value + ", " + value + "\n";
+        }
+        else {
+            buffer += "%" + reg + " = xor i1 " + value + ", true\n";
+        }
         reg++;
         return reg - 1;
     }
