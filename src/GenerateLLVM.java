@@ -494,7 +494,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp eq i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else if (type.equals("FLOAT")){
-            buffer += "%" + reg + " = icmp eq double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp oeq double %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp eq i1 %" + ref1 + ", %" + ref2 + "\n";
@@ -507,7 +507,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp eq i64 " + value1 + ", %" + ref2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp eq double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp oeq double " + value1 + ", %" + ref2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp eq i1 " + value1 + ", %" + ref2 + "\n";
@@ -520,7 +520,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp eq i64 %" + ref1 + ", " + value2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp eq double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp oeq double %" + ref1 + ", " + value2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp eq i1 %" + ref1 + ", " + value2 + "\n";
@@ -533,7 +533,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp eq i64 " + value1 + ", " + value2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp eq double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp oeq double " + value1 + ", " + value2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp eq i1 " + value1 + ", " + value2 + "\n";
@@ -547,7 +547,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp ne i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp ne double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp one double %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp ne i1 %" + ref1 + ", %" + ref2 + "\n";
@@ -560,7 +560,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp ne i64 " + value1 + ", %" + ref2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp ne double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp one double " + value1 + ", %" + ref2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp ne i1 " + value1 + ", %" + ref2 + "\n";
@@ -573,7 +573,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp ne i64 %" + ref1 + ", " + value2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp ne double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp one double %" + ref1 + ", " + value2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp ne i1 %" + ref1 + ", " + value2 + "\n";
@@ -586,7 +586,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp ne i64 " + value1 + ", " + value2 + "\n";
         }
         else if (type.equals("FLOAT")) {
-            buffer += "%" + reg + " = icmp ne double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp one double " + value1 + ", " + value2 + "\n";
         }
         else {
             buffer += "%" + reg + " = icmp ne i1 " + value1 + ", " + value2 + "\n";
@@ -600,7 +600,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sgt i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sgt double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp ogt double %" + ref1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -610,7 +610,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sgt i64 " + value1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sgt double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp ogt double " + value1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -620,7 +620,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sgt i64 %" + ref1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sgt double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp ogt double %" + ref1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -630,7 +630,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sgt i64 " + value1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sgt double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp ogt double " + value1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -641,7 +641,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sge i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sge double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp oge double %" + ref1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -651,7 +651,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sge i64 " + value1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sge double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp oge double " + value1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -661,7 +661,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sge i64 %" + ref1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sge double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp oge double %" + ref1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -671,7 +671,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sge i64 " + value1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sge double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp oge double " + value1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -682,7 +682,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp slt i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp slt double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp olt double %" + ref1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -692,7 +692,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp slt i64 " + value1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp slt double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp olt double " + value1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -702,7 +702,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp slt i64 %" + ref1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp slt double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp olt double %" + ref1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -712,7 +712,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp slt i64 " + value1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp slt double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp olt double " + value1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -723,7 +723,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sle i64 %" + ref1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sle double %" + ref1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp ole double %" + ref1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -733,7 +733,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sle i64 " + value1 + ", %" + ref2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sle double " + value1 + ", %" + ref2 + "\n";
+            buffer += "%" + reg + " = fcmp ole double " + value1 + ", %" + ref2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -743,7 +743,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sle i64 %" + ref1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sle double %" + ref1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp ole double %" + ref1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
@@ -753,7 +753,7 @@ class GenerateLLVM {
             buffer += "%" + reg + " = icmp sle i64 " + value1 + ", " + value2 + "\n";
         }
         else {
-            buffer += "%" + reg + " = icmp sle double " + value1 + ", " + value2 + "\n";
+            buffer += "%" + reg + " = fcmp ole double " + value1 + ", " + value2 + "\n";
         }
         reg++;
         return reg - 1;
